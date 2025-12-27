@@ -1,0 +1,48 @@
+name: CI: migrations + seed
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+      - 'scripts/**'
+      - '.github/workflows/seed-check.yml'
+
+jobs:
+  seed_check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: testdb
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install postgresql client (for pg_isready)
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Wait for postgres
+        run: |
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 -U postgres && break
+            sleep 1
+          done
+      - name: Install dependencies
+        run: npm ci
+      - name: Run migrations and seed
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+        run: npm run seed:ci
+      - name: Verify seed
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+        run: npm run verify:seed
