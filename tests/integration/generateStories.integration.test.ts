@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { describe, it, expect, vi } from 'vitest';
 
 // Mock AI client before importing the module under test
 vi.mock('../../supabase/functions/_shared/aiClient.ts', async () => {
@@ -12,13 +13,13 @@ import { runGenerateOutlinesForProject } from '../../supabase/functions/generate
 
 describe('generate-stories integration', () => {
   it('returns one outline per AI role and stores outlines', async () => {
-    (global as any).Deno = { env: { get: (k: string) => 'test' } };
+    (global as any).Deno = { env: { get: () => 'test' } };
     const posts: any[] = [];
     const originalFetch = global.fetch;
 
-    global.fetch = vi.fn(async (url: string, opts?: any) => {
-      if (opts?.method === 'POST' && url.endsWith('/story_outlines')) {
-        const body = JSON.parse(opts.body);
+    global.fetch = vi.fn(async (url: string, _opts?: any) => {
+      if (_opts?.method === 'POST' && url.endsWith('/story_outlines')) {
+        const body = JSON.parse(_opts.body);
         posts.push(body);
         return { ok: true, json: async () => ({ id: 'so-id' }) } as any;
       }

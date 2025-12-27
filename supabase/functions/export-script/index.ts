@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Deno/Supabase Edge runtime types (not required during Vitest runs)
 // reference: jsr:@supabase/functions-js/edge-runtime.d.ts
 
@@ -72,7 +73,7 @@ export async function runExportForScript(projectId: string, scriptId: string, ve
   let stored: any = null;
   try {
     stored = await storeRes.json();
-  } catch (e) {
+  } catch {
     stored = null;
   }
 

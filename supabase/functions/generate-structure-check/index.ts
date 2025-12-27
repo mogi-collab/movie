@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Simple Supabase Edge Function to validate story structure
 // For now, it performs local validations (scene continuity, foreshadowing hints, Chekhov checks)
 
@@ -7,15 +8,24 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-function runStructureCheck(outline: any) {
+interface SceneLike {
+  number?: number;
+  title?: string;
+  description?: string;
+  characters?: string[];
+  setting?: string;
+  act?: string;
+}
+
+function runStructureCheck(outline: Record<string, unknown>) {
   if (!outline) throw new Error('Missing outline');
 
-  const issues: any[] = [];
+  const issues: { type: string; message: string }[] = [];
 
   // Scene numbering and continuity check
-  const scenes: any[] = [];
+  const scenes: SceneLike[] = [];
   for (const actKey of ['act_one','act_two','act_three']) {
-    const act = outline?.[actKey];
+    const act = outline?.[actKey] as any;
     if (!act) continue;
     for (const s of act.scenes || []) scenes.push({ ...s, act: actKey });
   }
@@ -82,30 +92,32 @@ function extractKeywords(text: string) {
     .filter((w) => w.length > 3 && !['scene','act','the','and','with','from','into','then','that','this','have'].includes(w));
 }
 
-function detectForeshadowPayoffs(scenes: any[]) {
+interface Payoff { foreshadow_scene: number; payoff_scene: number; keywords: string[] }
+function detectForeshadowPayoffs(scenes: SceneLike[]): Payoff[] {
   // Record keywords per scene
   const kwByScene: Record<number, Set<string>> = {};
   for (const s of scenes) {
-    kwByScene[s.number] = new Set(extractKeywords(`${s.title} ${s.description}`));
+    kwByScene[s.number as number] = new Set(extractKeywords(`${s.title} ${s.description}`));
   }
 
-  const payoffs: any[] = [];
+  const payoffs: Payoff[] = [];
   for (let i = 0; i < scenes.length; i++) {
     for (let j = i + 1; j < scenes.length; j++) {
-      const a = Array.from(kwByScene[scenes[i].number] || []);
-      const b = Array.from(kwByScene[scenes[j].number] || []);
+      const a = Array.from(kwByScene[scenes[i].number as number] || []);
+      const b = Array.from(kwByScene[scenes[j].number as number] || []);
       const common = a.filter((x) => b.includes(x));
       if (common.length >= 1) {
-        payoffs.push({ foreshadow_scene: scenes[i].number, payoff_scene: scenes[j].number, keywords: common });
+        payoffs.push({ foreshadow_scene: scenes[i].number as number, payoff_scene: scenes[j].number as number, keywords: common });
       }
     }
   }
   return payoffs;
 }
 
-function detectLateIntroductions(scenes: any[]) {
+interface LateIntro { character: string; first_scene_index: number }
+function detectLateIntroductions(scenes: SceneLike[]): LateIntro[] {
   const seen: Set<string> = new Set();
-  const late: any[] = [];
+  const late: LateIntro[] = [];
   for (const s of scenes) {
     const chars = s.characters || [];
     for (const c of chars) {
@@ -130,8 +142,8 @@ function detectLateIntroductions(scenes: any[]) {
   return late;
 }
 
-function detectDisjointTransitions(scenes: any[]) {
-  const issues: any[] = [];
+function detectDisjointTransitions(scenes: SceneLike[]) {
+  const issues: { type: string; message: string }[] = [];
   for (let i = 1; i < scenes.length; i++) {
     const prev = scenes[i - 1];
     const cur = scenes[i];
@@ -145,31 +157,30 @@ function detectDisjointTransitions(scenes: any[]) {
   return issues;
 }
 
-function detectCharacterArcContinuity(scenes: any[]) {
+function detectCharacterArcContinuity(scenes: SceneLike[]) {
   // Determine appearance per act index (1,2,3)
   const appear: Record<string, Set<number>> = {};
   const actIndexByScene: Record<number, number> = {};
-  const actBoundaries: number[] = [];
   // Derive act index by scanning sequence and marking act changes
   let currentAct = 1;
   let lastActKey = scenes[0]?.act || 'act_one';
-  scenes.forEach((s, idx) => {
+  scenes.forEach((s) => {
     if (s.act && s.act !== lastActKey) {
       currentAct += 1;
       lastActKey = s.act;
     }
-    actIndexByScene[s.number] = currentAct;
+    actIndexByScene[s.number as number] = currentAct;
   });
 
   for (const s of scenes) {
-    const idx = actIndexByScene[s.number] || 1;
+    const idx = actIndexByScene[s.number as number] || 1;
     for (const c of s.characters || []) {
       appear[c] = appear[c] || new Set();
       appear[c].add(idx);
     }
   }
 
-  const issues: any[] = [];
+  const issues: { type: string; character?: string; message?: string }[] = [];
   for (const [c, set] of Object.entries(appear)) {
     // If a character appears only in one act, flag continuity issue
     if (set.size === 1) {
@@ -218,7 +229,7 @@ function enhancedRunStructureCheck(outline: any) {
   return { ...base, foreshadowPayoffs, lateIntroductions, issues, coherence_score };
 }
 
-function computeCoherenceScore({ issues, foreshadowPayoffs, lateIntroductions, disjointTrans, arcContinuity }: any) {
+function computeCoherenceScore({ issues, foreshadowPayoffs, lateIntroductions, disjointTrans, arcContinuity }: { issues: any[]; foreshadowPayoffs?: any[]; lateIntroductions?: any[]; disjointTrans?: any[]; arcContinuity?: any[] }) {
   // Base score starts at 1.0
   let score = 1.0;
 

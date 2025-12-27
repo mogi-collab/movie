@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Deno/Supabase Edge runtime types (not required during Vitest runs)
 
 const corsHeaders = {
@@ -52,7 +53,7 @@ export async function runRollbackForScript(projectId: string, scriptId: string, 
   });
 
   let stored: any = null;
-  try { stored = await newVersionRes.json(); } catch (e) { stored = null; }
+  try { stored = await newVersionRes.json(); } catch { stored = null; }
 
   return { rolled_to_version_id: stored?.id || null };
 }

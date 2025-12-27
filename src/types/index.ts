@@ -58,8 +58,8 @@ export interface AIOutput {
   phase: number;
   ai_role: AIRole;
   output_type: string;
-  content: Record<string, any>;
-  metadata?: Record<string, any>;
+  content: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
   created_at: string;
 }
 
@@ -72,7 +72,7 @@ export interface Idea {
   short_synopsis?: string;
   extended_synopsis?: string;
   hook_moment?: string;
-  theme_conflict?: Record<string, any>;
+  theme_conflict?: Record<string, unknown>;
   moral_question?: string;
   originality_score?: number;
   philosophy_depth?: number;
@@ -216,7 +216,7 @@ export interface ScriptVersion {
   project_id: string;
   version_number: number;
   content: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   created_at: string;
 }
 
@@ -225,7 +225,7 @@ export interface ExportArtifact {
   project_id: string;
   export_type: string;
   artifact_url?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   created_at: string;
 }
 

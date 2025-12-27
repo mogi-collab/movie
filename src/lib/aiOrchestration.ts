@@ -11,8 +11,8 @@ export interface AIRequest {
 export interface AIResponse {
   role: AIRole;
   phase: number;
-  output: Record<string, any>;
-  metadata?: Record<string, any>;
+  output: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
 }
 
 const AI_SYSTEM_PROMPTS: Record<AIRole, string> = {
@@ -46,7 +46,7 @@ DIRECTOR'S VISION:
   return basePrompt + contextInfo;
 }
 
-export function applySliderInfluence(output: Record<string, any>, sliders: ControlSliders): Record<string, any> {
+export function applySliderInfluence(output: Record<string, unknown>, sliders: ControlSliders): Record<string, unknown> {
   return {
     ...output,
     _applied_sliders: {
@@ -59,7 +59,7 @@ export function applySliderInfluence(output: Record<string, any>, sliders: Contr
   };
 }
 
-export function combineAIOutputs(outputs: AIResponse[]): Record<string, any> {
+export function combineAIOutputs(outputs: AIResponse[]): Record<string, unknown> {
   return {
     perspectives: Object.fromEntries(outputs.map((o) => [o.role, o.output])),
     generated_at: new Date().toISOString(),
@@ -107,7 +107,7 @@ export async function callAIAPI(
   return data.content[0].text;
 }
 
-export function createConceptGenerationPrompt(directorInputs: DirectorInputs, sliders: ControlSliders): string {
+export function createConceptGenerationPrompt(directorInputs: DirectorInputs): string {
   return `You are helping develop a film concept for a ${directorInputs.genre.join('/')} project.
 
 Core Details:
@@ -140,7 +140,7 @@ Format your response as a JSON object with these exact keys:
 }`;
 }
 
-export function parseConceptResponse(response: string): Record<string, any> {
+export function parseConceptResponse(response: string): Record<string, unknown> {
   try {
     const jsonMatch = response.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {

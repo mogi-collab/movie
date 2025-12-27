@@ -31,7 +31,7 @@ const phaseLabels: Record<CurrentPhase, string> = {
 };
 
 export default function ProjectPage({ projectId, onBack }: ProjectPageProps) {
-  const { project, directorInputs, sliders, loading } = useProject(projectId);
+  const { project, directorInputs, loading } = useProject(projectId);
   const [currentPhase, setCurrentPhase] = useState<CurrentPhase>('setup');
 
   if (loading) {

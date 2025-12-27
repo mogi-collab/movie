@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 export default function Phase6Structure() {
-  const [results, setResults] = useState<any | null>(null);
+  const [results, setResults] = useState<unknown | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function runCheck() {

@@ -14,17 +14,16 @@ export default function Phase5Characters({ projectId }: Phase5CharactersProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadCharacters();
+    const loadCharacters = async () => {
+      try {
+        const res = await supabase.from('characters').select('*').eq('project_id', projectId);
+        if (!res.error) setCharacters(res.data || []);
+      } catch {
+        // ignore
+      }
+    };
+    void loadCharacters();
   }, [projectId]);
-
-  const loadCharacters = async () => {
-    try {
-      const res = await supabase.from('characters').select('*').eq('project_id', projectId);
-      if (!res.error) setCharacters(res.data || []);
-    } catch (err) {
-      // ignore
-    }
-  };
 
   const handleGenerate = async () => {
     setGenerating(true);

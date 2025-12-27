@@ -9,7 +9,7 @@ interface Phase2StoryProps {
 export default function Phase2Story({ projectId }: Phase2StoryProps) {
   const [generating, setGenerating] = useState(false);
   const [outlines, setOutlines] = useState<StoryOutline[]>([]);
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<AIRole | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleGenerateOutlines = async () => {
@@ -37,7 +37,7 @@ export default function Phase2Story({ projectId }: Phase2StoryProps) {
     }
   };
 
-  const AI_ROLES = ['visionary', 'classic', 'emotional', 'realist', 'audience', 'producer'];
+  const AI_ROLES: AIRole[] = ['visionary', 'classic', 'emotional', 'realist', 'audience', 'producer'];
 
   return (
     <div className="space-y-8 pb-12">
@@ -88,7 +88,7 @@ export default function Phase2Story({ projectId }: Phase2StoryProps) {
 
           <div className="lg:col-span-2">
             {selectedRole && (() => {
-              const outline = outlines.find((o) => o.ai_role === selectedRole as any);
+              const outline = outlines.find((o) => o.ai_role === selectedRole);
               return outline ? (
                 <div className="space-y-6 bg-slate-900 rounded-lg border border-slate-700 p-8">
                   <div>

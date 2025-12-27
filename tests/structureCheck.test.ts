@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect } from 'vitest';
 import { runStructureCheck, enhancedRunStructureCheck } from '../supabase/functions/generate-structure-check/index.ts';
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { stubSupabaseWithOutline, stubStructureCheckFetch } from './test-utils';
 import * as React from 'react';
 

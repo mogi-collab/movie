@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
 import { Project } from '../types';
-import { LogOut, Plus, MoreVertical, Trash2, Archive } from 'lucide-react';
+import { LogOut, Plus, Trash2 } from 'lucide-react';
 
 interface DashboardPageProps {
   onProjectSelect: (projectId: string) => void;
@@ -18,11 +18,7 @@ export default function DashboardPage({ onProjectSelect }: DashboardPageProps) {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadProjects();
-  }, [user]);
-
-  const loadProjects = async () => {
+  const loadProjects = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -41,7 +37,11 @@ export default function DashboardPage({ onProjectSelect }: DashboardPageProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    loadProjects();
+  }, [loadProjects]);
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();

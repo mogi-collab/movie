@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Deno/Supabase Edge runtime types (not required during Vitest runs)
 // reference: jsr:@supabase/functions-js/edge-runtime.d.ts
 
@@ -88,7 +89,7 @@ Respond with valid JSON only.`;
   try {
     const parsed = extractJson(content);
     return parsed;
-  } catch (err) {
+  } catch {
     return { name: `Character ${index}`, role: 'support', backstory: '', desire: '', fear: '', flaws: { primary: '', secondary: '' }, moral_code: '', contradictions: '', inner_voice: '', arc_type: 'flat', error: 'parse_failed', raw: content };
   }
 }

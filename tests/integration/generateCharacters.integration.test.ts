@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock AI client before importing the module under test
@@ -17,12 +18,12 @@ describe('generate-characters integration', () => {
   beforeEach(() => {
     posts = [];
     // Mock Deno.env.get
-    (global as any).Deno = { env: { get: (k: string) => 'test' } };
+    (global as any).Deno = { env: { get: () => 'test' } };
 
-    global.fetch = vi.fn(async (url: string, opts?: any) => {
+    global.fetch = vi.fn(async (url: string, _opts?: any) => {
       // POST to characters: capture
-      if (opts?.method === 'POST' && url.endsWith('/characters')) {
-        const body = JSON.parse(opts.body);
+      if (_opts?.method === 'POST' && url.endsWith('/characters')) {
+        const body = JSON.parse(_opts.body);
         posts.push(body);
         return { ok: true, json: async () => ({ id: 'fake-char-id' }) } as any;
       }

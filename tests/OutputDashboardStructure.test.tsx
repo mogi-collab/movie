@@ -1,12 +1,11 @@
 /* @vitest-environment jsdom */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect } from 'vitest';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import OutputDashboard from '../src/components/OutputDashboard';
 import { createRoot } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
-import { supabase } from '../src/lib/supabase';
-import { vi } from 'vitest';
 
 describe('OutputDashboard (SSR snapshot)', () => {
   it('renders the Project Output header', () => {
@@ -31,7 +30,6 @@ describe('OutputDashboard (SSR snapshot)', () => {
       const start = Date.now();
       while (Date.now() - start < 1000) {
         if (container.innerHTML.includes('Structure Coherence') && container.innerHTML.includes('78%')) break;
-        // eslint-disable-next-line no-await-in-loop
         await new Promise((r) => setTimeout(r, 10));
       }
     });

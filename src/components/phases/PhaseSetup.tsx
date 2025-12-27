@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useProject as useProjectData } from '../../hooks/useProject';
-import { DirectorInputs, TargetAudience } from '../../types';
+import { DirectorInputs, TargetAudience, Platform } from '../../types';
 import { AlertCircle } from 'lucide-react';
 
 interface PhaseSetupProps {
@@ -36,7 +36,7 @@ export default function PhaseSetup({ projectId }: PhaseSetupProps) {
   const [message, setMessage] = useState('');
   const [emotionalTakeaway, setEmotionalTakeaway] = useState('');
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [platform, setPlatform] = useState<string>('ott');
+  const [platform, setPlatform] = useState<Platform>('ott');
   const [riskAppetite, setRiskAppetite] = useState(0.5);
   const [audienceDescription, setAudienceDescription] = useState('');
   const [culturalContext, setCulturalContext] = useState('');
@@ -105,7 +105,7 @@ export default function PhaseSetup({ projectId }: PhaseSetupProps) {
         message,
         emotional_takeaway: emotionalTakeaway,
         genre: selectedGenres,
-        platform: platform as any,
+        platform: platform,
         risk_appetite: riskAppetite,
         target_audience: targetAudience,
         cultural_context: culturalContext,

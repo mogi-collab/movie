@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Idea, Debate, Script } from '../types';
+import { Idea, Debate, Script, Character } from '../types';
 import { Download, FileText, BarChart3 } from 'lucide-react';
 
 interface OutputDashboardProps {
@@ -11,52 +11,51 @@ export default function OutputDashboard({ projectId }: OutputDashboardProps) {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [debates, setDebates] = useState<Debate[]>([]);
   const [scripts, setScripts] = useState<Script[]>([]);
-  const [characters, setCharacters] = useState<any[]>([]);
+  const [characters, setCharacters] = useState<Character[]>([]);
   const [coherenceScore, setCoherenceScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'concepts' | 'debates' | 'scripts'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'concepts' | 'debates' | 'scripts' | 'characters'>('overview');
 
   useEffect(() => {
-    loadData();
-  }, [projectId]);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-
-      const [ideasData, debatesData, scriptsData, charactersData, outlinesData] = await Promise.all([
-        supabase.from('ideas').select('*').eq('project_id', projectId),
-        supabase.from('debates').select('*').eq('project_id', projectId),
-        supabase.from('scripts').select('*').eq('project_id', projectId),
-        supabase.from('characters').select('*').eq('project_id', projectId),
-        supabase.from('story_outlines').select('*').eq('project_id', projectId),
-      ]);
-
-      if (!ideasData.error) setIdeas(ideasData.data || []);
-      if (!debatesData.error) setDebates(debatesData.data || []);
-      if (!scriptsData.error) setScripts(scriptsData.data || []);
-      if (!charactersData.error) setCharacters(charactersData.data || []);
-      // Compute structure coherence if we have an outline
+    const loadData = async () => {
       try {
-        const outline = (outlinesData.data || [])[0];
-        if (outline) {
-          const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-structure-check`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
-            body: JSON.stringify({ outline }),
-          });
-          if (res.ok) {
-            const json = await res.json();
-            setCoherenceScore(typeof json.coherence_score === 'number' ? Math.round(json.coherence_score * 100) : null);
+        setLoading(true);
+
+        const [ideasData, debatesData, scriptsData, charactersData, outlinesData] = await Promise.all([
+          supabase.from('ideas').select('*').eq('project_id', projectId),
+          supabase.from('debates').select('*').eq('project_id', projectId),
+          supabase.from('scripts').select('*').eq('project_id', projectId),
+          supabase.from('characters').select('*').eq('project_id', projectId),
+          supabase.from('story_outlines').select('*').eq('project_id', projectId),
+        ]);
+
+        if (!ideasData.error) setIdeas(ideasData.data || []);
+        if (!debatesData.error) setDebates(debatesData.data || []);
+        if (!scriptsData.error) setScripts(scriptsData.data || []);
+        if (!charactersData.error) setCharacters(charactersData.data || []);
+        // Compute structure coherence if we have an outline
+        try {
+          const outline = (outlinesData.data || [])[0];
+          if (outline) {
+            const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-structure-check`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
+              body: JSON.stringify({ outline }),
+            });
+            if (res.ok) {
+              const json = await res.json();
+              setCoherenceScore(typeof json.coherence_score === 'number' ? Math.round(json.coherence_score * 100) : null);
+            }
           }
+        } catch {
+          // ignore structure check failures
         }
-      } catch (e) {
-        // ignore structure check failures
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    void loadData();
+  }, [projectId]);
 
   const handleExportReport = async () => {
     const report = {

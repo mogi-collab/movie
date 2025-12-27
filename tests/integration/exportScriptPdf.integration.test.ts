@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { runExportScriptPdf } from '../../supabase/functions/export-script-pdf/index.ts';
 
@@ -10,7 +11,7 @@ describe('export-script-pdf integration', () => {
     // Ensure we use process.env in Node tests to control PDF/Storage URLs
     (global as any).Deno = undefined;
 
-    global.fetch = vi.fn(async (url: string, opts?: any) => {
+    global.fetch = vi.fn(async (url: string, _opts?: any) => {
       if (typeof url === 'string' && url.includes('/script_versions')) {
         return { ok: true, json: async () => [{ content: 'SOME SCRIPT', metadata: { title: 'PDF Title' }, version_number: 1 }] } as any;
       }
@@ -22,14 +23,14 @@ describe('export-script-pdf integration', () => {
 
       // mock storage service
       if (typeof url === 'string' && url.includes('storage-service')) {
-        const body = JSON.parse(opts.body);
+        const body = JSON.parse(_opts!.body);
         posts.push({ upload: true, filename: body.filename });
         return { ok: true, json: async () => ({ url: `https://storage.example/${body.filename}` }) } as any;
       }
 
       // capture exports POST
-      if (opts?.method === 'POST' && url.endsWith('/exports')) {
-        const body = JSON.parse(opts.body);
+      if (_opts?.method === 'POST' && url.endsWith('/exports')) {
+        const body = JSON.parse(_opts.body);
         posts.push({ export: true, body });
         return { ok: true, json: async () => ({ id: 'export-id' }) } as any;
       }

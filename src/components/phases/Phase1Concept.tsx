@@ -6,7 +6,7 @@ interface Phase1ConceptProps {
   projectId: string;
 }
 
-const AI_ROLES = ['visionary', 'classic', 'emotional', 'realist', 'audience', 'producer'];
+const AI_ROLES: AIRole[] = ['visionary', 'classic', 'emotional', 'realist', 'audience', 'producer'];
 
 export default function Phase1Concept({ projectId }: Phase1ConceptProps) {
   const [generating, setGenerating] = useState(false);
@@ -82,11 +82,11 @@ export default function Phase1Concept({ projectId }: Phase1ConceptProps) {
                 <button
                   key={role}
                   onClick={() => {
-                    const idea = ideas.find((i) => i.ai_role === role as any);
+                    const idea = ideas.find((i) => i.ai_role === role);
                     setSelectedIdea(idea?.id || null);
                   }}
                   className={`w-full text-left px-4 py-3 rounded-lg font-medium transition ${
-                    selectedIdea === ideas.find((i) => i.ai_role === role as any)?.id
+                    selectedIdea === ideas.find((i) => i.ai_role === role)?.id
                       ? 'bg-blue-600 text-white'
                       : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                   }`}
@@ -151,7 +151,7 @@ export default function Phase1Concept({ projectId }: Phase1ConceptProps) {
   );
 }
 
-function getAIRoleDescription(role: string): string {
+function getAIRoleDescription(role: AIRole): string {
   const descriptions: Record<string, string> = {
     visionary: 'Bold, experimental, symbolic',
     classic: 'Structure, rules, proven storytelling',

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Deno/Supabase Edge runtime types (not required during Vitest runs)
 // reference: jsr:@supabase/functions-js/edge-runtime.d.ts
 
@@ -58,7 +59,7 @@ if (typeof Deno !== 'undefined' && typeof (Deno as any).serve === 'function') {
       let stored: any = null;
       try {
         stored = await storeRes.json();
-      } catch (e) {
+      } catch {
         stored = null;
       }
 
@@ -73,7 +74,7 @@ if (typeof Deno !== 'undefined' && typeof (Deno as any).serve === 'function') {
           },
           body: JSON.stringify({ script_id: stored?.id || null, project_id: projectId, version_number: 1, content: script.full_content, metadata: { script_type: type, title: script.title } }),
         });
-      } catch (e) {
+      } catch {
         // ignore versioning failures so script generation still returns
       }
 
@@ -118,7 +119,7 @@ export async function runGenerateScriptsForProject(projectId: string, debates: a
     let stored: any = null;
     try {
       stored = await storeRes.json();
-    } catch (e) {
+    } catch {
       stored = null;
     }
 
@@ -133,7 +134,7 @@ export async function runGenerateScriptsForProject(projectId: string, debates: a
         },
         body: JSON.stringify({ script_id: stored?.id || null, project_id: projectId, version_number: 1, content: script.full_content, metadata: { script_type: type, title: script.title } }),
       });
-    } catch (e) {
+    } catch {
       // ignore version creation errors
     }
 
@@ -177,7 +178,7 @@ async function generateScriptFromOutline(type: string, outline: any, debates: an
     if (!jsonMatch) throw new Error('No JSON found');
     const parsed = JSON.parse(jsonMatch[0]);
     return parsed;
-  } catch (err) {
+  } catch {
     // Fallback minimal script
     const fallback = {
       title: `${outline?.ai_role || 'script'} - ${type}`,

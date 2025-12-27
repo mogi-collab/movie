@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Deno/Supabase Edge runtime types (not required during Vitest runs)
 
 const corsHeaders = {
@@ -56,7 +57,7 @@ export async function runExportScriptPdf(projectId: string, scriptId: string, ve
     pdfBase64 = (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function') ? Buffer.from(placeholder).toString('base64') : btoa(placeholder);
   }
 
-  // Upload to storage service if configured
+  // Upload to storage service if configured; otherwise attempt to upload to Supabase storage
   const storageService = (typeof Deno !== 'undefined' && (Deno as any).env) ? (Deno as any).env.get('STORAGE_SERVICE_URL') : process.env.STORAGE_SERVICE_URL;
   let artifactUrl = `data:application/pdf;base64,${pdfBase64}`;
 
@@ -66,6 +67,16 @@ export async function runExportScriptPdf(projectId: string, scriptId: string, ve
     if (!resp.ok) throw new Error('Storage service failed');
     const data = await resp.json();
     artifactUrl = data.url;
+  } else {
+    // try internal Supabase storage upload
+    try {
+      const { runUploadPdf } = await import('../upload-pdf/index.ts');
+      const filename = `${scriptId}-v${versionNumber}.pdf`;
+      const res = await runUploadPdf(projectId, filename, pdfBase64, 'application/pdf');
+      artifactUrl = res.url;
+    } catch {
+      // fallback to data URL
+    }
   }
 
   // store export record
@@ -76,7 +87,7 @@ export async function runExportScriptPdf(projectId: string, scriptId: string, ve
   });
 
   let stored: any = null;
-  try { stored = await storeRes.json(); } catch (e) { stored = null; }
+  try { stored = await storeRes.json(); } catch { stored = null; }
 
   return { id: stored?.id || null, export_type: 'pdf', artifact_url: artifactUrl, metadata: { version_number: versionNumber, title }, created_at: new Date().toISOString() };
 }

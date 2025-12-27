@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { vi } from 'vitest';
 import { supabase } from '../src/lib/supabase';
-
 export function stubSupabaseWithOutline(outline?: any) {
   const originalFrom = (supabase as any).from;
   (supabase as any).from = (table: string) => ({
@@ -20,7 +20,7 @@ export function stubSupabaseWithOutline(outline?: any) {
 
 export function stubStructureCheckFetch(score: number) {
   const originalFetch = global.fetch;
-  global.fetch = vi.fn(async (url: string, opts?: any) => {
+  global.fetch = vi.fn(async (url: string) => {
     if (typeof url === 'string' && url.includes('/generate-structure-check')) {
       return { ok: true, json: async () => ({ coherence_score: score }) } as any;
     }

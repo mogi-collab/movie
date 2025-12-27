@@ -1,23 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock generateScriptFromOutline's AI call by mocking fetch for anthropic
 describe('generate-scripts integration', () => {
   const originalFetch = global.fetch;
   beforeEach(() => {
-    (global as any).Deno = { env: { get: (k: string) => 'test' } };
+    (global as any).Deno = { env: { get: () => 'test' } };
     const posts: any[] = [];
     (global as any).__SCRIPT_POSTS = posts;
-    global.fetch = vi.fn(async (url: string, opts?: any) => {
+    global.fetch = vi.fn(async (url: string, _opts?: any) => {
       if (typeof url === 'string' && url.includes('anthropic.com')) {
         return { ok: true, json: async () => ({ content: [{ text: JSON.stringify({ title: 'T', full_content: 'SC', scene_count: 3, word_count: 450, emotional_coherence: 0.7, logical_continuity: 0.8, audience_tolerance: 0.6, overall_score: 0.75 }) }] }) } as any;
       }
-      if (opts?.method === 'POST' && url.endsWith('/scripts')) {
-        const body = JSON.parse(opts.body);
+      if (_opts?.method === 'POST' && url.endsWith('/scripts')) {
+        const body = JSON.parse(_opts.body);
         posts.push(body);
         return { ok: true, json: async () => ({ id: 'script-id' }) } as any;
       }
-      if (opts?.method === 'POST' && url.endsWith('/script_versions')) {
-        const body = JSON.parse(opts.body);
+      if (_opts?.method === 'POST' && url.endsWith('/script_versions')) {
+        const body = JSON.parse(_opts.body);
         // store script_versions posts alongside scripts
         posts.push({ __version: true, ...body });
         return { ok: true, json: async () => ({ id: 'sv-id' }) } as any;

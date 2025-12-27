@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Shared AI client utilities for Supabase Edge Functions
 // Includes simple in-memory cache and retry logic for Anthropic API calls
 

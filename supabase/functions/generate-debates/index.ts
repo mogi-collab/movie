@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Deno/Supabase Edge runtime types (not required during Vitest runs)
 // reference: jsr:@supabase/functions-js/edge-runtime.d.ts
 
@@ -120,7 +121,7 @@ async function generateArgumentForRole(role: string, outlines: any[]) {
   try {
     const parsed = extractJson(content);
     return { ai_role: role, preferred_outline: parsed.preferred_outline, argument: parsed.argument, strength: parsed.strength ?? 0.5, counter_arguments: parsed.counter_arguments ?? [] };
-  } catch (err) {
+  } catch {
     return { ai_role: role, preferred_outline: outlines[0]?.ai_role, argument: content.substring(0, 600), strength: 0.5, counter_arguments: [] };
   }
 }

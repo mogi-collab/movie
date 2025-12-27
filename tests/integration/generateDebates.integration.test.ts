@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('../../supabase/functions/_shared/aiClient.ts', async () => {
@@ -12,12 +13,12 @@ import { runGenerateDebatesForProject } from '../../supabase/functions/generate-
 describe('generate-debates integration', () => {
   const originalFetch = global.fetch;
   beforeEach(() => {
-    (global as any).Deno = { env: { get: (k: string) => 'test' } };
-    global.fetch = vi.fn(async (url: string, opts?: any) => {
+    (global as any).Deno = { env: { get: () => 'test' } };
+    global.fetch = vi.fn(async (url: string, _opts?: any) => {
       if (typeof url === 'string' && url.includes('anthropic.com')) {
         return { ok: true, json: async () => ({ content: [{ text: JSON.stringify({ preferred_outline: 'visionary', argument: 'We should pick visionary', strength: 0.9, counter_arguments: [] }) }] }) } as any;
       }
-      if (opts?.method === 'POST' && url.endsWith('/debates')) {
+      if (_opts?.method === 'POST' && url.endsWith('/debates')) {
         return { ok: true, json: async () => ({ id: 'debate-id' }) } as any;
       }
       return { ok: true, json: async () => [] } as any;

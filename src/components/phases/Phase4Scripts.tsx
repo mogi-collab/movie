@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Script } from '../../types';
 import { Loader, Film, Download } from 'lucide-react';
 
@@ -6,11 +6,18 @@ interface Phase4ScriptsProps {
   projectId: string;
 }
 
+interface Version {
+  id: string;
+  content?: string;
+  version_number: number;
+  created_at?: string;
+}
+
 export default function Phase4Scripts({ projectId }: Phase4ScriptsProps) {
   const [generating, setGenerating] = useState(false);
   const [scripts, setScripts] = useState<Script[]>([]);
   const [selectedScript, setSelectedScript] = useState<string | null>(null);
-  const [versions, setVersions] = useState<any[]>([]);
+  const [versions, setVersions] = useState<Version[]>([]);
   const [showVersions, setShowVersions] = useState(false);
   const [versionsLoading, setVersionsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -88,7 +95,7 @@ export default function Phase4Scripts({ projectId }: Phase4ScriptsProps) {
       const data = await res.json();
       setVersions(data || []);
       setShowVersions(true);
-    } catch (e) {
+    } catch {
       setError('Failed to load versions');
     } finally {
       setVersionsLoading(false);
@@ -146,8 +153,60 @@ export default function Phase4Scripts({ projectId }: Phase4ScriptsProps) {
   const [previewVersionNumber, setPreviewVersionNumber] = useState<number | null>(null);
   const [diffHtml, setDiffHtml] = useState<string | null>(null);
 
-  function simpleDiff(oldStr: string, newStr: string) {
-    // very small line-by-line diff: lines present in new but not in old marked with +, removed lines with -
+  // Accessibility refs
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+  const versionsContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (previewOpen) {
+      // focus close button for keyboard users
+      try { closeBtnRef.current?.focus(); } catch { /* ignore */ }
+      // add keydown listener to close on Escape
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setPreviewOpen(false);
+      };
+      window.addEventListener('keydown', onKey);
+      return () => window.removeEventListener('keydown', onKey);
+    }
+    return undefined;
+  }, [previewOpen]);
+
+  function computeWordDiffLine(aLine: string, bLine: string) {
+    const aWords = (aLine || '').split(/(\s+)/);
+    const bWords = (bLine || '').split(/(\s+)/);
+
+    // build LCS DP table
+    const dp: number[][] = Array.from({ length: aWords.length + 1 }, () => Array(bWords.length + 1).fill(0));
+    for (let i = aWords.length - 1; i >= 0; i--) {
+      for (let j = bWords.length - 1; j >= 0; j--) {
+        if (aWords[i] === bWords[j]) dp[i][j] = 1 + dp[i + 1][j + 1];
+        else dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+      }
+    }
+
+    // reconstruct
+    let i = 0;
+    let j = 0;
+    const parts: string[] = [];
+    while (i < aWords.length && j < bWords.length) {
+      if (aWords[i] === bWords[j]) {
+        parts.push(`<span>${escapeHtml(aWords[i])}</span>`);
+        i++; j++;
+      } else if (dp[i + 1][j] >= dp[i][j + 1]) {
+        parts.push(`<span class="text-rose-400">${escapeHtml(aWords[i])}</span>`);
+        i++;
+      } else {
+        parts.push(`<span class="text-emerald-400">${escapeHtml(bWords[j])}</span>`);
+        j++;
+      }
+    }
+    while (i < aWords.length) { parts.push(`<span class="text-rose-400">${escapeHtml(aWords[i++])}</span>`); }
+    while (j < bWords.length) { parts.push(`<span class="text-emerald-400">${escapeHtml(bWords[j++])}</span>`); }
+
+    return parts.join('');
+  }
+
+  function computeDiffHtml(oldStr: string, newStr: string) {
     const a = (oldStr || '').split('\n');
     const b = (newStr || '').split('\n');
     const out: string[] = [];
@@ -156,10 +215,11 @@ export default function Phase4Scripts({ projectId }: Phase4ScriptsProps) {
       const la = a[i] ?? '';
       const lb = b[i] ?? '';
       if (la === lb) {
-        out.push(escapeHtml(la));
+        out.push(`<div>${escapeHtml(la)}</div>`);
       } else {
-        if (la) out.push(`<div class="text-rose-400">- ${escapeHtml(la)}</div>`);
-        if (lb) out.push(`<div class="text-emerald-400">+ ${escapeHtml(lb)}</div>`);
+        // compute word-level diff for lines
+        if (la) out.push(`<div class="text-rose-400">- ${computeWordDiffLine(la, lb)}</div>`);
+        if (lb) out.push(`<div class="text-emerald-400">+ ${computeWordDiffLine(la, lb)}</div>`);
       }
     }
     return out.join('<br/>');
@@ -169,7 +229,7 @@ export default function Phase4Scripts({ projectId }: Phase4ScriptsProps) {
     return (s || '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m] as string));
   }
 
-  const previewVersion = (v: any) => {
+  const previewVersion = (v: Version) => {
     const script = scripts.find((s) => s.id === selectedScript);
     if (!script) return;
     // load content for version (if the versions array has content already, use it; otherwise fetch by id)
@@ -178,7 +238,7 @@ export default function Phase4Scripts({ projectId }: Phase4ScriptsProps) {
     setPreviewContent(content);
     setPreviewVersionNumber(v.version_number);
     // compute diff between current script.full_content and version content
-    setDiffHtml(simpleDiff(script.full_content || '', content));
+    setDiffHtml(computeDiffHtml(script.full_content || '', content));
     setPreviewOpen(true);
   };
 
@@ -332,6 +392,8 @@ export default function Phase4Scripts({ projectId }: Phase4ScriptsProps) {
                           onClick={() => loadVersions(script.id)}
                           className="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-sm text-slate-200"
                           disabled={versionsLoading || generating}
+                          aria-controls={`versions-${script.id}`}
+                          aria-expanded={showVersions}
                         >
                           {versionsLoading ? 'Loading...' : 'Load Versions'}
                         </button>
@@ -352,34 +414,49 @@ export default function Phase4Scripts({ projectId }: Phase4ScriptsProps) {
                         ) : versions.length === 0 ? (
                           <div className="text-sm text-slate-400">No versions available</div>
                         ) : (
-                          versions.map((v) => (
-                            <div key={v.id} className="flex items-center justify-between bg-slate-800 p-3 rounded">
-                              <div>
-                                <div className="font-medium text-slate-200">Version {v.version_number}</div>
-                                <div className="text-xs text-slate-400">{new Date(v.created_at).toLocaleString()}</div>
+                          <div id={`versions-${script.id}`} ref={versionsContainerRef} role="list" aria-label={`Versions for ${script.title}`} className="space-y-2">
+                            {versions.map((v) => (
+                              <div key={v.id} className="flex items-center justify-between bg-slate-800 p-3 rounded" role="listitem">
+                                <div>
+                                  <div className="font-medium text-slate-200">Version {v.version_number}</div>
+                                  <div className="text-xs text-slate-400">{new Date(v.created_at).toLocaleString()}</div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <button onClick={() => handleExport(script.id, v.version_number)} className="px-3 py-1 bg-slate-700 rounded text-sm text-slate-200" disabled={generating || versionsLoading} aria-label={`Export version ${v.version_number}`}>Export</button>
+                                  <button onClick={() => previewVersion(v)} onKeyDown={(e) => {
+                                    if (e.key === 'Enter') previewVersion(v);
+                                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                                      const list = versionsContainerRef.current?.querySelectorAll('button[aria-label^="Preview version"]');
+                                      if (!list) return;
+                                      const arr = Array.from(list) as HTMLButtonElement[];
+                                      const targetEl = (e.currentTarget as HTMLElement) || (e.target as HTMLElement);
+                                      const idxNow = arr.findIndex((el) => el === targetEl);
+                                      if (idxNow === -1) return;
+                                      const nextIdx = e.key === 'ArrowDown' ? Math.min(arr.length - 1, idxNow + 1) : Math.max(0, idxNow - 1);
+                                      // schedule focus to the next tick for robustness in tests
+                                      setTimeout(() => arr[nextIdx]?.focus(), 0);
+                                    }
+                                  }} className="px-3 py-1 bg-slate-700 rounded text-sm text-slate-200" disabled={generating || versionsLoading} aria-label={`Preview version ${v.version_number}`}>Preview</button>
+                                  <button onClick={() => handleRollback(v.id)} className="px-3 py-1 bg-rose-600 rounded text-sm text-white" disabled={generating || versionsLoading} aria-label={`Rollback to version ${v.version_number}`}>Rollback</button>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <button onClick={() => handleExport(script.id, v.version_number)} className="px-3 py-1 bg-slate-700 rounded text-sm text-slate-200" disabled={generating || versionsLoading}>Export</button>
-                                <button onClick={() => previewVersion(v)} className="px-3 py-1 bg-slate-700 rounded text-sm text-slate-200" disabled={generating || versionsLoading}>Preview</button>
-                                <button onClick={() => handleRollback(v.id)} className="px-3 py-1 bg-rose-600 rounded text-sm text-white" disabled={generating || versionsLoading}>Rollback</button>
-                              </div>
-                            </div>
-                          ))
+                            ))}
+                          </div>
                         )}
                       </div>
                     )}
 
                     {/* Preview Modal */}
                     {previewOpen && (
-                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6">
-                        <div className="w-full max-w-3xl bg-slate-900 rounded-lg border border-slate-700 p-6">
+                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6" role="presentation">
+                        <div className="w-full max-w-3xl bg-slate-900 rounded-lg border border-slate-700 p-6" role="dialog" aria-modal="true" aria-labelledby="preview-title" aria-live="polite">
                           <div className="flex items-start justify-between gap-4 mb-4">
                             <div>
-                              <h4 className="text-lg font-semibold text-slate-50">Preview - Version {previewVersionNumber}</h4>
+                              <h4 id="preview-title" className="text-lg font-semibold text-slate-50">Preview - Version {previewVersionNumber}</h4>
                               <div className="text-xs text-slate-400 mt-1">Compare with current script</div>
                             </div>
                             <div className="flex items-center gap-2">
-                              <button onClick={() => setPreviewOpen(false)} className="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-sm text-slate-200">Close</button>
+                              <button ref={closeBtnRef} onClick={() => setPreviewOpen(false)} className="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-sm text-slate-200" aria-label="Close preview">Close</button>
                             </div>
                           </div>
 

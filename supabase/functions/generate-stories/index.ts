@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Deno/Supabase Edge runtime types (not required during Vitest runs)
 // reference: jsr:@supabase/functions-js/edge-runtime.d.ts
 import { callAnthropicWithRetry, extractJson } from '../_shared/aiClient.ts';
@@ -68,9 +69,9 @@ if (typeof Deno !== 'undefined' && typeof (Deno as any).serve === 'function') {
     }
 
     return new Response(JSON.stringify({ outlines }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-  } catch (error) {
-    console.error("Error generating stories:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  } catch {
+    console.error("Error generating stories");
+    return new Response(JSON.stringify({ error: "Unknown error" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
   });
 }
@@ -94,12 +95,12 @@ async function generateOutlineForRole(role: string, directorInputs: any, sliders
   try {
     const parsed = extractJson(content);
     return { ai_role: role, ...parsed };
-  } catch (err) {
+  } catch {
     return { ai_role: role, act_one: { title: '', scenes: [] }, act_two: { title: '', scenes: [] }, act_three: { title: '', scenes: [] }, emotional_arc: [], endings: [], error: 'Parse failed', raw: content };
   }
 }
 
-function createOutlinePrompt(directorInputs: any, sliders: any) {
+function createOutlinePrompt(directorInputs: any) {
   return `Create a three-act outline for a film with theme: "${directorInputs.core_theme}". Provide:
 {
   "act_one": { "title": "", "scenes": [{ "number": 1, "title": "", "description": "" }] },

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Deno/Supabase Edge runtime types (not required during Vitest runs)
 // reference: jsr:@supabase/functions-js/edge-runtime.d.ts
 
@@ -88,7 +89,7 @@ if (typeof Deno !== 'undefined' && typeof (Deno as any).serve === 'function') {
     const [currentSliders = getDefaultSliders()] = await slidersResponse.json();
 
     // Generate concepts for each AI role
-    const aiRoles = ["visionary", "classic", "emotional", "realist", "audience", "producer"];
+    // roles intentionally mirrored to project: visionary, classic, emotional, realist, audience, producer
     // Generate concepts in parallel and use shared AI client
     const ideas = await runGenerateConceptsForProject(projectId, directorInputs[0], currentSliders);
 
@@ -147,22 +148,22 @@ function getDefaultSliders() {
 
 import { callAnthropicWithRetry, extractJson } from '../_shared/aiClient.ts';
 
-export async function runGenerateConceptsForProject(projectId: string, directorInputs: any, sliders: any) {
+export async function runGenerateConceptsForProject(projectId: string, directorInputs: any) {
   const aiRoles = ["visionary", "classic", "emotional", "realist", "audience", "producer"];
-  const ideaPromises = aiRoles.map((role) => generateConceptForRole(role, directorInputs, sliders));
+  const ideaPromises = aiRoles.map((role) => generateConceptForRole(role, directorInputs));
   return await Promise.all(ideaPromises);
 }
 
-async function generateConceptForRole(role: string, directorInputs: any, sliders: any) {
+async function generateConceptForRole(role: string, directorInputs: any) {
   const systemPrompt = getSystemPromptForRole(role, directorInputs);
-  const userPrompt = createConceptGenerationPrompt(directorInputs, sliders);
+  const userPrompt = createConceptGenerationPrompt(directorInputs);
 
   const content = await callAnthropicWithRetry(systemPrompt, userPrompt, { model: 'claude-3-5-sonnet-20241022', max_tokens: 1500, temperature: 0.8 });
 
   try {
     const parsed = extractJson(content);
     return { ai_role: role, ...parsed };
-  } catch (err) {
+    } catch {
     return { ai_role: role, one_liner: 'Unable to generate', logline: content.substring(0, 100), error: 'Parse failed', raw: content };
   }
 }
@@ -184,7 +185,7 @@ Genres: ${directorInputs.genre.join(", ")}
 Platform: ${directorInputs.platform}`;
 }
 
-function createConceptGenerationPrompt(directorInputs: any, sliders: any): string {
+function createConceptGenerationPrompt(directorInputs: any): string {
   return `Generate a compelling film concept for a ${directorInputs.genre.join("/")} project with the theme: "${directorInputs.core_theme}".
 
 Create:
