@@ -13,3 +13,4 @@ export { default as Phase11Editing } from './Phase11Editing';
 export { default as Phase12Distribution } from './Phase12Distribution';
 export { default as Phase13Budget } from './Phase13Budget';
 export { default as Phase14Legal } from './Phase14Legal';
+export { default as Phase15Release } from './Phase15Release';
