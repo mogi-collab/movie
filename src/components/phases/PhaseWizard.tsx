@@ -7,6 +7,24 @@ interface PhaseWizardProps {
 export default function PhaseWizard({ onFinish }: PhaseWizardProps) {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<{ theme?: string }>({});
+  const [error, setError] = useState<string | null>(null);
+
+  const handleNext = () => {
+    // validation on step 1
+    if (step === 1) {
+      if (!data.theme || !data.theme.trim()) {
+        setError('Please enter a core theme');
+        return;
+      }
+    }
+    setError(null);
+    setStep((s) => s + 1);
+  };
+
+  const handleBack = () => {
+    setError(null);
+    setStep((s) => Math.max(1, s - 1));
+  };
 
   return (
     <div>
@@ -24,6 +42,7 @@ export default function PhaseWizard({ onFinish }: PhaseWizardProps) {
               data-testid="theme-input"
             />
           </label>
+          {error && <div role="alert" data-testid="error">{error}</div>}
         </div>
       )}
 
@@ -34,9 +53,9 @@ export default function PhaseWizard({ onFinish }: PhaseWizardProps) {
       )}
 
       <div style={{ marginTop: 12 }}>
-        <button onClick={() => setStep(Math.max(1, step - 1))} data-testid="back">Back</button>
+        <button onClick={handleBack} data-testid="back">Back</button>
         {step < 2 ? (
-          <button onClick={() => setStep(step + 1)} data-testid="next">Next</button>
+          <button onClick={handleNext} data-testid="next">Next</button>
         ) : (
           <button
             onClick={() => {
