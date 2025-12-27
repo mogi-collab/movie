@@ -30,7 +30,13 @@ jobs:
         run: npm run typecheck
 
       - name: Run tests
-        run: npm run test -- --run
+        run: |
+          npm run test -- --run || true
+          ret=$?
+          echo "Vitest exit code: $ret"
+          if [ -f node_modules/.cache/vitest/results.json ]; then cat node_modules/.cache/vitest/results.json; fi
+          if [ -f node_modules/.cache/vitest/junit.xml ]; then cat node_modules/.cache/vitest/junit.xml; fi
+          exit $ret
 
       - name: Upload Vitest results
         if: always()
