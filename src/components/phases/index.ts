@@ -1,4 +1,5 @@
 export { default as PhaseSetup } from './PhaseSetup';
+export { default as PhaseWizard } from './PhaseWizard';
 export { default as Phase1Concept } from './Phase1Concept';
 export { default as Phase2Story } from './Phase2Story';
 export { default as Phase3Debate } from './Phase3Debate';
