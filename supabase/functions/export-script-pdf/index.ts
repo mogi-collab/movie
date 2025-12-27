@@ -54,7 +54,13 @@ export async function runExportScriptPdf(projectId: string, scriptId: string, ve
   } else {
     // Fallback: create a fake PDF placeholder (not a real PDF but indicates functionality)
     const placeholder = `PDF_PLACEHOLDER:\n${title}\n\n${ver.content?.substring(0, 1000)}`;
-    pdfBase64 = (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function') ? Buffer.from(placeholder).toString('base64') : btoa(placeholder);
+    const base64Encode = (s: string) => {
+      const g = globalThis as any;
+      if (g?.Buffer && typeof g.Buffer.from === 'function') return g.Buffer.from(s).toString('base64');
+      if (typeof btoa === 'function') return btoa(s);
+      return g?.Buffer?.from(s).toString('base64');
+    };
+    pdfBase64 = base64Encode(placeholder);
   }
 
   // Upload to storage service if configured; otherwise attempt to upload to Supabase storage
@@ -70,28 +76,30 @@ export async function runExportScriptPdf(projectId: string, scriptId: string, ve
   } else {
     // try internal Supabase storage upload
     try {
-      const { runUploadPdf } = await import('../upload-pdf/index.ts');
-      const filename = `${scriptId}-v${versionNumber}.pdf`;
-      const res = await runUploadPdf(projectId, filename, pdfBase64, 'application/pdf');
-      artifactUrl = res.url;
-    } catch {
-      // fallback to data URL
+        if (pdfBase64) {
+          const { runUploadPdf } = await import('../upload-pdf/index.ts');
+          const filename = `${scriptId}-v${versionNumber}.pdf`;
+          const res = await runUploadPdf(projectId, filename, pdfBase64, 'application/pdf');
+          artifactUrl = res.url;
+        }
+      } catch {
+        // fallback to data URL
+      }
     }
-  }
 
-  // store export record
-  const storeRes = await fetch(`${supabaseUrl}/rest/v1/exports`, {
-    method: 'POST',
-    headers: { apikey: supabaseServiceKey || '', Authorization: `Bearer ${supabaseServiceKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ project_id: projectId, export_type: 'pdf', artifact_url: artifactUrl, metadata: { version_number: versionNumber, script_id: scriptId, title } }),
-  });
+    // store export record
+    const storeRes = await fetch(`${supabaseUrl}/rest/v1/exports`, {
+      method: 'POST',
+      headers: { apikey: supabaseServiceKey || '', Authorization: `Bearer ${supabaseServiceKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ project_id: projectId, export_type: 'pdf', artifact_url: artifactUrl, metadata: { version_number: versionNumber, script_id: scriptId, title } }),
+    });
 
-  let stored: any = null;
-  try { stored = await storeRes.json(); } catch { stored = null; }
+    let stored: any = null;
+    try { stored = await storeRes.json(); } catch { stored = null; }
 
-  return { id: stored?.id || null, export_type: 'pdf', artifact_url: artifactUrl, metadata: { version_number: versionNumber, title }, created_at: new Date().toISOString() };
+    return { id: stored?.id || null, export_type: 'pdf', artifact_url: artifactUrl, metadata: { version_number: versionNumber, title }, created_at: new Date().toISOString() };
 }
 
 function escapeHtml(s: string) {
-  return (s || '').replace(/[&<>"]+/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m] as string));
+  return (s || '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m] as string));
 }

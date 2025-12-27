@@ -231,7 +231,7 @@ export default function PhaseSetup({ projectId }: PhaseSetupProps) {
                     name="platform"
                     value={p.id}
                     checked={platform === p.id}
-                    onChange={(e) => setPlatform(e.target.value)}
+                    onChange={(e) => setPlatform(e.target.value as Platform)}
                     className="w-4 h-4 accent-blue-600"
                   />
                   <span className="text-slate-200">{p.label}</span>

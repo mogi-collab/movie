@@ -94,7 +94,7 @@ Respond with valid JSON only.`;
   }
 }
 
-export async function runGenerateCharactersForProject(projectId: string, directorInputs: any, outline: any, numberOfCharacters = 3) {
+export async function runGenerateCharactersForProject(_projectId: string, directorInputs: any, outline: any, numberOfCharacters = 3) {
   const charPromises = Array.from({ length: numberOfCharacters }).map((_, idx) => generateCharacterForIndex(idx + 1, directorInputs, outline));
   return await Promise.all(charPromises);
 }

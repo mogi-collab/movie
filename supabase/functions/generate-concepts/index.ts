@@ -158,7 +158,7 @@ if (typeof Deno !== 'undefined' && typeof (Deno as any).serve === 'function') {
 
 import { callAnthropicWithRetry, extractJson } from '../_shared/aiClient.ts';
 
-export async function runGenerateConceptsForProject(projectId: string, directorInputs: any) {
+export async function runGenerateConceptsForProject(_projectId: string, directorInputs: any) {
   const aiRoles = ["visionary", "classic", "emotional", "realist", "audience", "producer"];
   const results = await Promise.all(aiRoles.map(async (role) => {
     try {

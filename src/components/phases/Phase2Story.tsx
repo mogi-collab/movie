@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StoryOutline } from '../../types';
+import { StoryOutline, AIRole } from '../../types';
 import { Loader, BookOpen } from 'lucide-react';
 
 interface Phase2StoryProps {

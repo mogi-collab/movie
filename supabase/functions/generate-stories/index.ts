@@ -3,7 +3,7 @@
 // reference: jsr:@supabase/functions-js/edge-runtime.d.ts
 import { callAnthropicWithRetry, extractJson } from '../_shared/aiClient.ts';
 
-export async function runGenerateOutlinesForProject(projectId: string, directorInputs: any, sliders: any) {
+export async function runGenerateOutlinesForProject(_projectId: string, directorInputs: any, sliders: any) {
   const aiRoles = ["visionary", "classic", "emotional", "realist", "audience", "producer"];
   const outlinePromises = aiRoles.map((role) => generateOutlineForRole(role, directorInputs, sliders));
   return await Promise.all(outlinePromises);
@@ -100,8 +100,9 @@ async function generateOutlineForRole(role: string, directorInputs: any, sliders
   }
 }
 
-function createOutlinePrompt(directorInputs: any) {
-  return `Create a three-act outline for a film with theme: "${directorInputs.core_theme}". Provide:
+function createOutlinePrompt(directorInputs: any, sliders?: any) {
+  const sliderNote = sliders ? `Control Sliders: emotion_intensity=${sliders?.emotion_intensity ?? 0.5}, tension_aggression=${sliders?.tension_aggression ?? 0.5}` : '';
+  return `Create a three-act outline for a film with theme: "${directorInputs.core_theme}". ${sliderNote} Provide:
 {
   "act_one": { "title": "", "scenes": [{ "number": 1, "title": "", "description": "" }] },
   "act_two": { "title": "", "scenes": [] },

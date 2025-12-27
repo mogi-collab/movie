@@ -82,10 +82,10 @@ export default function ProjectPage({ projectId, onBack }: ProjectPageProps) {
               Setup
             </button>
 
-            {Array.from({ length: 16 }, (_, i) => (i + 1) as const).map((phase) => (
+            {Array.from({ length: 16 }, (_, i) => (i + 1)).map((phase) => (
               <button
                 key={phase}
-                onClick={() => setCurrentPhase(phase)}
+                onClick={() => setCurrentPhase(phase as CurrentPhase)}
                 className={`w-full text-left px-4 py-3 rounded-lg font-medium transition ${
                   currentPhase === phase
                     ? 'bg-blue-600 text-white'
@@ -112,7 +112,7 @@ export default function ProjectPage({ projectId, onBack }: ProjectPageProps) {
             {currentPhase === 3 && directorInputs && <Phase3Debate projectId={projectId} />}
             {currentPhase === 4 && directorInputs && <Phase4Scripts projectId={projectId} />}
             {currentPhase === 5 && directorInputs && <Phase5Characters projectId={projectId} />}
-            {currentPhase > 5 && currentPhase <= 16 && (
+            {(typeof currentPhase === 'number' && currentPhase > 5 && currentPhase <= 16) && (
               <div className="bg-slate-900 rounded-lg border border-slate-700 p-8 text-center">
                 <p className="text-slate-400">Phase {currentPhase} - {phaseLabels[currentPhase]}</p>
                 <p className="text-slate-500 mt-2">Coming soon...</p>

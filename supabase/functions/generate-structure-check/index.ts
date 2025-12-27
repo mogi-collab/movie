@@ -31,7 +31,7 @@ function runStructureCheck(outline: Record<string, unknown>) {
   }
 
   // ensure scene numbers increase monotonically
-  const numbers = scenes.map((s) => s.number);
+  const numbers = scenes.map((s) => s.number).filter((n): n is number => typeof n === 'number');
   for (let i = 1; i < numbers.length; i++) {
     if (numbers[i] <= numbers[i - 1]) {
       issues.push({ type: 'scene_numbering', message: `Scene ${numbers[i]} is not greater than previous scene ${numbers[i-1]}` });
@@ -43,7 +43,7 @@ function runStructureCheck(outline: Record<string, unknown>) {
   for (const s of scenes) {
     const text = `${s.title} ${s.description}`.toLowerCase();
     const matches = (text.match(/gun|mystery|secret|hint|foreshadow|prophecy|clue/g) || []).length;
-    if (matches) foreshadowHints[s.number] = matches;
+    if (s.number != null && matches) foreshadowHints[s.number] = matches;
   }
   if (Object.keys(foreshadowHints).length === 0) {
     issues.push({ type: 'foreshadow_absent', message: 'No explicit foreshadowing hints detected. Consider adding early clues for major late payoffs.' });
@@ -180,7 +180,7 @@ function detectCharacterArcContinuity(scenes: SceneLike[]) {
     }
   }
 
-  const issues: { type: string; character?: string; message?: string }[] = [];
+  const issues: { type: string; character: string; message: string }[] = [];
   for (const [c, set] of Object.entries(appear)) {
     // If a character appears only in one act, flag continuity issue
     if (set.size === 1) {

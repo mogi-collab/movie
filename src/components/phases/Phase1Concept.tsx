@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Idea } from '../../types';
+import { Idea, AIRole } from '../../types';
 import { Zap, Loader } from 'lucide-react';
 
 interface Phase1ConceptProps {

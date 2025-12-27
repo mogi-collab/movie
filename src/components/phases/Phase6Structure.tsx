@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function Phase6Structure() {
   const [results, setResults] = useState<unknown | null>(null);

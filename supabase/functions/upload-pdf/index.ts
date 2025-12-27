@@ -29,7 +29,7 @@ if (typeof Deno !== 'undefined' && typeof (Deno as any).serve === 'function') {
 }
 
 export async function runUploadPdf(
-  projectId: string,
+  _projectId: string,
   filename: string,
   base64: string,
   contentType = 'application/pdf',
@@ -51,7 +51,19 @@ export async function runUploadPdf(
 
   const uploadUrl = `${supabaseUrl}/storage/v1/object/${bucket}/${encodeURIComponent(filename)}`;
 
-  const body = (typeof Buffer !== 'undefined' && typeof Buffer.from === 'function') ? Buffer.from(base64, 'base64') : atob(base64);
+  const base64ToBytes = (b64: string) => {
+    const g = globalThis as any;
+    if (g?.Buffer && typeof g.Buffer.from === 'function') return g.Buffer.from(b64, 'base64');
+    if (typeof atob === 'function') {
+      const binary = atob(b64);
+      const arr = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
+      return arr;
+    }
+    return g?.Buffer?.from(b64, 'base64');
+  };
+
+  const body = base64ToBytes(base64);
 
   // Retry/backoff defaults
   const retries = opts?.retries ?? 3;

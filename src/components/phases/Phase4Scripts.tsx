@@ -419,7 +419,7 @@ export default function Phase4Scripts({ projectId }: Phase4ScriptsProps) {
                               <div key={v.id} className="flex items-center justify-between bg-slate-800 p-3 rounded" role="listitem">
                                 <div>
                                   <div className="font-medium text-slate-200">Version {v.version_number}</div>
-                                  <div className="text-xs text-slate-400">{new Date(v.created_at).toLocaleString()}</div>
+                                  <div className="text-xs text-slate-400">{v.created_at ? new Date(v.created_at).toLocaleString() : 'Unknown date'}</div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <button onClick={() => handleExport(script.id, v.version_number)} className="px-3 py-1 bg-slate-700 rounded text-sm text-slate-200" disabled={generating || versionsLoading} aria-label={`Export version ${v.version_number}`}>Export</button>
