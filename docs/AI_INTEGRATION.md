@@ -85,7 +85,10 @@ main().catch(console.error);
 
 ## CI notes and secrets
 - Store `GEMINI_API_KEY` and `HF_API_TOKEN` in GitHub Actions secrets and access them using `secrets.GEMINI_API_KEY` and `secrets.HF_API_TOKEN`.
+- Use `GEMINI_MODEL` and `HF_DEFAULT_MODEL` as secrets or env overrides when needed.
 - See `.github/workflows/ai-examples.yml` for an example CI job running the python and node examples using secrets.
+
+> New: `docs/AI_DIRECTOR.md` provides a high-level design for the multi-phase Director Assistant and links to the phase specs and implementation notes.
 
 
 ## Security & best practices
