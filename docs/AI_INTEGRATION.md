@@ -20,12 +20,22 @@ export HF_API_TOKEN="your_new_hf_token_here"
 
 
 ## Overview & recommended models
-- Gemini: `gemini-1.5-flash` (fast), `gemini-1.5-pro` (better reasoning)
-- Hugging Face: `mistralai/Mistral-7B-Instruct-v0.2`, `meta-llama/Meta-Llama-3-8B-Instruct`
-- CrewAI for multi-agent debates (pip package `crewai`)
-- Emotions: `bhadresh-savani/distilbert-base-uncased-emotion`
-- Memory: FAISS + `sentence-transformers/all-MiniLM-L6-v2`
-- Visual mood boards: Stable Diffusion via `diffusers` or Hugging Face Spaces
+
+The repository uses the following default providers and models (also available in `ai.config.json`). Use the environment variables `GEMINI_MODEL` and `HF_DEFAULT_MODEL` to override these defaults.
+
+| Feature | Tool / Model |
+|--------:|:-------------|
+| Core generation | Gemini — `gemini-1.5-flash` (fallback `gemini-1.5-pro`) |
+| Backup LLM | Hugging Face — `mistralai/Mistral-7B-Instruct-v0.2` (alt: `meta-llama/Meta-Llama-3-8B-Instruct`) |
+| Multi-AI debate | CrewAI (`crewai` package) |
+| Emotion detection | `bhadresh-savani/distilbert-base-uncased-emotion` |
+| Dialogue emotion | DistilBERT (`distilbert-base-uncased-finetuned-sst-2-english`) |
+| Story logic | spaCy + KeyBERT |
+| Memory | FAISS + `sentence-transformers/all-MiniLM-L6-v2` |
+| Visuals | Stable Diffusion (e.g., `runwayml/stable-diffusion-v1-5`) |
+| Audience logic | scikit-learn |
+
+Also: see `ai.config.json` for machine-readable defaults used by helper functions.
 
 
 ## Files added in this repo

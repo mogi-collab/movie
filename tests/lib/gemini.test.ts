@@ -23,4 +23,18 @@ describe('generateWithGemini', () => {
     expect(res.text).toContain('ok');
     expect((global as any).fetch).toHaveBeenCalled();
   });
+
+  it('respects GEMINI_MODEL env var', async () => {
+    (process.env as any).GEMINI_API_KEY = 'fake';
+    (process.env as any).GEMINI_MODEL = 'gemini-test-1';
+
+    (global as any).fetch = vi.fn(async (url: string) => ({ ok: true, json: async () => ({ candidates: [{ content: [{ text: 'ok' }] }] }) }));
+
+    await generateWithGemini('hello');
+    expect((global as any).fetch).toHaveBeenCalled();
+    const calledUrl = ((global as any).fetch as any).mock.calls[0][0] as string;
+    expect(calledUrl).toContain('models/gemini-test-1:generate');
+
+    delete (process.env as any).GEMINI_MODEL;
+  });
 });

@@ -2,11 +2,13 @@ export interface GeminiResponse {
   text: string;
 }
 
-export async function generateWithGemini(prompt: string): Promise<GeminiResponse> {
+export async function generateWithGemini(prompt: string, model?: string): Promise<GeminiResponse> {
   if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY not set');
 
+  // Model selection: function arg -> env var -> fallback default
+  const selectedModel = model || process.env.GEMINI_MODEL || 'gemini-1.5-flash';
   // Minimal HTTP call outline; recommend using the official Python client for complex usage.
-  const url = 'https://generativelanguage.googleapis.com/v1beta2/models/gemini-1.5-flash:generate';
+  const url = `https://generativelanguage.googleapis.com/v1beta2/models/${selectedModel}:generate`;
   const body = JSON.stringify({ prompt });
 
   const res = await fetch(url, {

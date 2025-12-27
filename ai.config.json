@@ -1,0 +1,11 @@
+{
+  "coreGeneration": { "provider": "gemini", "model": "gemini-1.5-flash", "alt": "gemini-1.5-pro" },
+  "backupLLM": { "provider": "hf", "model": "mistralai/Mistral-7B-Instruct-v0.2", "alt": "meta-llama/Meta-Llama-3-8B-Instruct" },
+  "multiAIDebate": { "provider": "crewai", "package": "crewai" },
+  "emotionDetection": { "model": "bhadresh-savani/distilbert-base-uncased-emotion" },
+  "dialogueEmotion": { "model": "distilbert-base-uncased-finetuned-sst-2-english" },
+  "storyLogic": { "tools": ["spacy", "keybert"] },
+  "memory": { "model": "sentence-transformers/all-MiniLM-L6-v2" },
+  "visuals": { "model": "runwayml/stable-diffusion-v1-5" },
+  "audienceLogic": { "tool": "scikit-learn" }
+}

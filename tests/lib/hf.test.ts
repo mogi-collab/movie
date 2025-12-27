@@ -23,4 +23,18 @@ describe('generateWithHF', () => {
     expect(res).toContain('hello');
     expect((global as any).fetch).toHaveBeenCalled();
   });
+
+  it('uses HF_DEFAULT_MODEL when modelId undefined', async () => {
+    (process.env as any).HF_API_TOKEN = 'fake';
+    (process.env as any).HF_DEFAULT_MODEL = 'mistral-test/1';
+
+    (global as any).fetch = vi.fn(async (url: string) => ({ ok: true, json: async () => ([{ generated_text: 'hello' }]) }));
+
+    await generateWithHF(undefined, 'hi');
+    expect((global as any).fetch).toHaveBeenCalled();
+    const calledUrl = ((global as any).fetch as any).mock.calls[0][0] as string;
+    expect(calledUrl).toContain('models/mistral-test/1');
+
+    delete (process.env as any).HF_DEFAULT_MODEL;
+  });
 });
