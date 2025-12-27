@@ -30,6 +30,9 @@ jobs:
         run: npm run typecheck
 
       - name: Run tests
+        env:
+          VITE_SUPABASE_URL: 'http://localhost:54321'
+          VITE_SUPABASE_ANON_KEY: 'anon-key'
         run: |
           npm run test -- --run || true
           ret=$?
@@ -64,6 +67,9 @@ jobs:
 
       - name: Run integration tests
         # Run only integration tests (these tests mock external services by default)
+        env:
+          VITE_SUPABASE_URL: 'http://localhost:54321'
+          VITE_SUPABASE_ANON_KEY: 'anon-key'
         run: npm run test -- tests/integration --run
 
       - name: Upload integration test results
