@@ -14,6 +14,9 @@ export GEMINI_API_KEY="your_new_gemini_key_here"
 export HF_API_TOKEN="your_new_hf_token_here"
 
 > Restart VS Code after setting env vars in your shell so the editor picks them up.
+>
+> Note: A `.env.example` file has been added to this repo showing the keys `GEMINI_API_KEY` and `HF_API_TOKEN` for local development. Do **not** add real keys to source control — copy `.env.example` to `.env` and fill the values locally.
+
 
 
 ## Overview & recommended models
