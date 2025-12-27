@@ -18,6 +18,26 @@ export default function DashboardPage({ onProjectSelect }: DashboardPageProps) {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Health check UI state
+  const [healthData, setHealthData] = useState<any | null>(null);
+  const [checkingHealth, setCheckingHealth] = useState(false);
+
+  const checkHealth = async () => {
+    try {
+      setCheckingHealth(true);
+      setError(null);
+      const res = await fetch('/api/health');
+      if (!res.ok) throw new Error(`Status ${res.status}`);
+      const json = await res.json();
+      setHealthData(json);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setHealthData(null);
+    } finally {
+      setCheckingHealth(false);
+    }
+  };
+
   const loadProjects = useCallback(async () => {
     if (!user) return;
 
@@ -147,6 +167,20 @@ export default function DashboardPage({ onProjectSelect }: DashboardPageProps) {
             {error}
           </div>
         )}
+
+        <div className="mb-6 flex items-center gap-4">
+          <div className="p-4 bg-slate-900 border border-slate-700 rounded-lg text-slate-300 w-full flex items-center justify-between">
+            <div>
+              <div className="text-sm font-medium text-slate-400">API Health</div>
+              <div className="text-xs text-slate-500">{healthData ? `${healthData.status} • ${new Date(healthData.timestamp).toLocaleString()}` : 'Unknown'}</div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button onClick={checkHealth} disabled={checkingHealth} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition disabled:opacity-60">
+                {checkingHealth ? 'Checking...' : 'Check API Health'}
+              </button>
+            </div>
+          </div>
+        </div>
 
         {loading ? (
           <div className="text-center py-16">
