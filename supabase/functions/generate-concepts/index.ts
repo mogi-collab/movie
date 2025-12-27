@@ -86,12 +86,26 @@ if (typeof Deno !== 'undefined' && typeof (Deno as any).serve === 'function') {
       }
     );
 
-    const [currentSliders = getDefaultSliders()] = await slidersResponse.json();
+    await slidersResponse.json();
+
+    // Validate critical environment variables before doing heavy work
+    const anthropicKey = Deno.env.get('ANTHROPIC_API_KEY');
+    const supabaseUrlEnv = Deno.env.get('SUPABASE_URL');
+    const serviceKeyEnv = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!anthropicKey) {
+      console.error('Missing ANTHROPIC_API_KEY for generate-concepts');
+      return new Response(JSON.stringify({ error: 'Missing ANTHROPIC_API_KEY' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    if (!supabaseUrlEnv || !serviceKeyEnv) {
+      console.error('Missing Supabase environment configuration for generate-concepts');
+      return new Response(JSON.stringify({ error: 'Missing Supabase environment configuration' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
 
     // Generate concepts for each AI role
     // roles intentionally mirrored to project: visionary, classic, emotional, realist, audience, producer
     // Generate concepts in parallel and use shared AI client
-    const ideas = await runGenerateConceptsForProject(projectId, directorInputs[0], currentSliders);
+    const ideas = await runGenerateConceptsForProject(projectId, directorInputs[0]);
 
     // Store ideas in database
     for (const idea of ideas) {
@@ -136,15 +150,6 @@ if (typeof Deno !== 'undefined' && typeof (Deno as any).serve === 'function') {
   });
 }
 
-function getDefaultSliders() {
-  return {
-    emotion_intensity: 0.5,
-    tension_aggression: 0.5,
-    dialogue_density: 0.5,
-    visual_symbolism: 0.5,
-    pace: 0.5,
-  };
-}
 
 import { callAnthropicWithRetry, extractJson } from '../_shared/aiClient.ts';
 
