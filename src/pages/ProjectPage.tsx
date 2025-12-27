@@ -33,6 +33,7 @@ const phaseLabels: Record<CurrentPhase, string> = {
 export default function ProjectPage({ projectId, onBack }: ProjectPageProps) {
   const { project, directorInputs, loading } = useProject(projectId);
   const [currentPhase, setCurrentPhase] = useState<CurrentPhase>('setup');
+  const [showDirector, setShowDirector] = useState(false);
 
   if (loading) {
     return (
@@ -60,6 +61,15 @@ export default function ProjectPage({ projectId, onBack }: ProjectPageProps) {
               <h1 className="text-2xl font-bold text-slate-50">{project?.title}</h1>
               <p className="text-sm text-slate-400">Phase {project?.current_phase} • {phaseLabels[currentPhase]}</p>
             </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowDirector((s) => !s)}
+              className="px-3 py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-white"
+            >
+              {showDirector ? 'Close Director' : 'Open Director'}
+            </button>
           </div>
         </div>
       </header>
@@ -106,16 +116,44 @@ export default function ProjectPage({ projectId, onBack }: ProjectPageProps) {
 
         <main className="flex-1 overflow-auto">
           <div className="max-w-6xl mx-auto px-8 py-8">
-            {currentPhase === 'setup' && <PhaseSetup projectId={projectId} />}
-            {currentPhase === 1 && directorInputs && <Phase1Concept projectId={projectId} />}
-            {currentPhase === 2 && directorInputs && <Phase2Story projectId={projectId} />}
-            {currentPhase === 3 && directorInputs && <Phase3Debate projectId={projectId} />}
-            {currentPhase === 4 && directorInputs && <Phase4Scripts projectId={projectId} />}
-            {currentPhase === 5 && directorInputs && <Phase5Characters projectId={projectId} />}
-            {(typeof currentPhase === 'number' && currentPhase > 5 && currentPhase <= 16) && (
-              <div className="bg-slate-900 rounded-lg border border-slate-700 p-8 text-center">
-                <p className="text-slate-400">Phase {currentPhase} - {phaseLabels[currentPhase]}</p>
-                <p className="text-slate-500 mt-2">Coming soon...</p>
+            {showDirector ? (
+              <div className="mb-6">
+                <PhaseSetup projectId={projectId} />
+                <div className="mt-6">
+                  {/* Director panel */}
+                  <div className="max-w-3xl mx-auto">
+                    {/* Lazy-load the component to keep bundle small — simple import for now */}
+                    <PhaseSetup projectId={projectId} />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                {currentPhase === 'setup' && <PhaseSetup projectId={projectId} />}
+                {currentPhase === 1 && directorInputs && <Phase1Concept projectId={projectId} />}
+                {currentPhase === 2 && directorInputs && <Phase2Story projectId={projectId} />}
+                {currentPhase === 3 && directorInputs && <Phase3Debate projectId={projectId} />}
+                {currentPhase === 4 && directorInputs && <Phase4Scripts projectId={projectId} />}
+                {currentPhase === 5 && directorInputs && <Phase5Characters projectId={projectId} />}
+                {(typeof currentPhase === 'number' && currentPhase > 5 && currentPhase <= 16) && (
+                  <div className="bg-slate-900 rounded-lg border border-slate-700 p-8 text-center">
+                    <p className="text-slate-400">Phase {currentPhase} - {phaseLabels[currentPhase]}</p>
+                    <p className="text-slate-500 mt-2">Coming soon...</p>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Render DirectorPanel as a flyout when toggled */}
+            {showDirector && (
+              <div className="fixed right-6 bottom-6 w-[560px] z-50">
+                <div className="bg-slate-900 border border-slate-700 rounded-lg p-6 shadow-xl">
+                  <div>
+                    {/* Dynamically import component to keep tests simple; import inline */}
+                    {/* eslint-disable-next-line @typescript-eslint/no-var-requires */}
+                    {(require('../components/Director/DirectorPanel').default as any)({ projectId, onClose: () => setShowDirector(false) })}
+                  </div>
+                </div>
               </div>
             )}
           </div>
