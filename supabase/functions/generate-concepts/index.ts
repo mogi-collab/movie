@@ -107,28 +107,33 @@ if (typeof Deno !== 'undefined' && typeof (Deno as any).serve === 'function') {
     // Generate concepts in parallel and use shared AI client
     const ideas = await runGenerateConceptsForProject(projectId, directorInputs[0]);
 
-    // Store ideas in database
+    // Store ideas in database; continue even if individual inserts fail
     for (const idea of ideas) {
-      await fetch(`${supabaseUrl}/rest/v1/ideas`, {
-        method: "POST",
-        headers: {
-          apikey: supabaseServiceKey || "",
-          Authorization: `Bearer ${supabaseServiceKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          project_id: projectId,
-          ai_role: idea.ai_role,
-          one_liner: idea.one_liner,
-          logline: idea.logline,
-          short_synopsis: idea.short_synopsis,
-          hook_moment: idea.hook_moment,
-          theme_conflict: idea.theme_conflict,
-          moral_question: idea.moral_question,
-          originality_score: idea.originality_score,
-          philosophy_depth: idea.philosophy_depth,
-        }),
-      });
+      try {
+        await fetch(`${supabaseUrl}/rest/v1/ideas`, {
+          method: "POST",
+          headers: {
+            apikey: supabaseServiceKey || "",
+            Authorization: `Bearer ${supabaseServiceKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            project_id: projectId,
+            ai_role: idea.ai_role,
+            one_liner: (idea as any).one_liner,
+            logline: (idea as any).logline,
+            short_synopsis: (idea as any).short_synopsis,
+            hook_moment: (idea as any).hook_moment,
+            theme_conflict: (idea as any).theme_conflict,
+            moral_question: (idea as any).moral_question,
+            originality_score: (idea as any).originality_score,
+            philosophy_depth: (idea as any).philosophy_depth,
+          }),
+        });
+      } catch (err) {
+        console.error(`Failed to store idea for role ${idea.ai_role}:`, err);
+        // continue storing others
+      }
     }
 
     return new Response(
@@ -155,8 +160,17 @@ import { callAnthropicWithRetry, extractJson } from '../_shared/aiClient.ts';
 
 export async function runGenerateConceptsForProject(projectId: string, directorInputs: any) {
   const aiRoles = ["visionary", "classic", "emotional", "realist", "audience", "producer"];
-  const ideaPromises = aiRoles.map((role) => generateConceptForRole(role, directorInputs));
-  return await Promise.all(ideaPromises);
+  const results = await Promise.all(aiRoles.map(async (role) => {
+    try {
+      const res = await generateConceptForRole(role, directorInputs);
+      return res;
+    } catch (err) {
+      console.error(`Error generating concept for role ${role}:`, err);
+      return { ai_role: role, error: err instanceof Error ? err.message : String(err) };
+    }
+  }));
+
+  return results;
 }
 
 async function generateConceptForRole(role: string, directorInputs: any) {

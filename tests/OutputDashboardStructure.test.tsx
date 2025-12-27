@@ -5,7 +5,7 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import OutputDashboard from '../src/components/OutputDashboard';
 import { createRoot } from 'react-dom/client';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 
 describe('OutputDashboard (SSR snapshot)', () => {
   it('renders the Project Output header', () => {

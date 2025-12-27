@@ -3,7 +3,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 import Phase4Scripts from '../src/components/phases/Phase4Scripts';
 
 describe('Phase4Scripts versions preview', () => {

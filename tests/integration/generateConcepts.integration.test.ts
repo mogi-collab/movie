@@ -44,7 +44,7 @@ describe('generate-concepts integration', () => {
   });
 
   it('returns one idea per AI role', async () => {
-    const ideas = await runGenerateConceptsForProject('proj1', { core_theme: 'Theme', genre: ['drama'], platform: 'theatre' }, {} as any);
+    const ideas = await runGenerateConceptsForProject('proj1', { core_theme: 'Theme', genre: ['drama'], platform: 'theatre' } as any);
     // The runner returns 6 role outputs
     expect(Array.isArray(ideas)).toBe(true);
     expect(ideas.length).toBe(6);
@@ -58,5 +58,25 @@ describe('generate-concepts integration', () => {
 
     expect(posts.length).toBe(6);
     expect(posts[0]).toHaveProperty('one_liner', 'OL');
+  });
+
+  it('continues when one role fails', async () => {
+    // Re-mock AI client to throw for the Realist role based on the system prompt
+    vi.unmock('../../supabase/functions/_shared/aiClient.ts');
+    vi.mock('../../supabase/functions/_shared/aiClient.ts', async () => ({
+      callAnthropicWithRetry: async (systemPrompt: string) => {
+        if (systemPrompt.toLowerCase().includes('realist')) {
+          throw new Error('Simulated Anthropic failure for Realist');
+        }
+        return JSON.stringify({ one_liner: 'OL', logline: 'LG', short_synopsis: 'SS', hook_moment: 'HM', theme_conflict: {}, moral_question: '', originality_score: 0.8, philosophy_depth: 0.6 });
+      },
+      extractJson: (s: string) => JSON.parse(s),
+    }));
+
+    const ideas = await runGenerateConceptsForProject('proj1', { core_theme: 'Theme', genre: ['drama'], platform: 'theatre' } as any);
+    expect(ideas.length).toBe(6);
+    const errors = ideas.filter((i: any) => i.error);
+    expect(errors.length).toBeGreaterThanOrEqual(1);
+    expect(errors.some((e: any) => e.ai_role === 'realist')).toBe(true);
   });
 });
