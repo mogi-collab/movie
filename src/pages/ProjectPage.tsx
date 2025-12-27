@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import { useProject } from '../hooks/useProject';
 import { ArrowLeft } from 'lucide-react';
 import { Phase1Concept, Phase2Story, Phase3Debate, Phase4Scripts, Phase5Characters, PhaseSetup } from '../components/phases';
+
+const DirectorPanel = lazy(() => import('../components/Director/DirectorPanel'));
+
 
 interface ProjectPageProps {
   projectId: string;

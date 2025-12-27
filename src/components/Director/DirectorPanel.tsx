@@ -11,6 +11,9 @@ export default function DirectorPanel({ projectId, onClose }: DirectorPanelProps
   const [running, setRunning] = useState(false);
   const [trace, setTrace] = useState<any[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [useCrewAI, setUseCrewAI] = useState(true);
+  const [useEmotionPipeline, setUseEmotionPipeline] = useState(true);
+  const [useMemory, setUseMemory] = useState(true);
 
   async function handleRun() {
     setRunning(true);
@@ -21,6 +24,11 @@ export default function DirectorPanel({ projectId, onClose }: DirectorPanelProps
       const body = {
         projectId,
         phases: phases.split(',').map((s) => ({ id: Number(s.trim()), input })),
+        options: {
+          crewAI: useCrewAI,
+          emotionPipeline: useEmotionPipeline,
+          memory: useMemory,
+        },
       };
 
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/run-director`, {
@@ -74,6 +82,21 @@ export default function DirectorPanel({ projectId, onClose }: DirectorPanelProps
       />
 
       <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 text-sm text-slate-300">
+            <input type="checkbox" checked={useCrewAI} onChange={(e) => setUseCrewAI(e.target.checked)} />
+            <span>CrewAI</span>
+          </label>
+          <label className="flex items-center gap-2 text-sm text-slate-300">
+            <input type="checkbox" checked={useEmotionPipeline} onChange={(e) => setUseEmotionPipeline(e.target.checked)} />
+            <span>Emotion pipeline</span>
+          </label>
+          <label className="flex items-center gap-2 text-sm text-slate-300">
+            <input type="checkbox" checked={useMemory} onChange={(e) => setUseMemory(e.target.checked)} />
+            <span>Memory</span>
+          </label>
+        </div>
+
         <button
           onClick={handleRun}
           disabled={running}

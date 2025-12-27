@@ -19,16 +19,19 @@ serve(async (req: Request) => {
     const input = p.input || '';
 
     try {
-      // Simple mapping demo: phases 1–4 use Gemini, fallback to HF
+      // Echo provided options for testing / debugging
+      const options = body.options || {};
+
+      // Simple mapping demo: phases 1–6 use Gemini, fallback to HF
       if (id >= 1 && id <= 6) {
         const out = await generateWithGemini(String(input));
-        trace.push({ phase: id, provider: 'gemini', output: out });
+        trace.push({ phase: id, provider: 'gemini', options, output: out });
       } else {
         const out = await generateWithHF(undefined, String(input));
-        trace.push({ phase: id, provider: 'hf', output: out });
+        trace.push({ phase: id, provider: 'hf', options, output: out });
       }
     } catch (err: any) {
-      trace.push({ phase: id, error: String(err) });
+      trace.push({ phase: id, error: String(err), options: body.options || {} });
     }
   }
 
