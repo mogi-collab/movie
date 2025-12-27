@@ -278,3 +278,16 @@ For issues or feature requests, contact the development team.
 
 **AI Director Assistant v1.0**
 *Transforming Creative Vision into Production-Ready Screenplays*
+
+---
+
+## AI Integrations
+
+This repository includes examples, helper wrappers, and CI templates to integrate with AI services (Gemini, Hugging Face, CrewAI, emotion models, memory stores, and visual models).
+
+- Read the full guide: `docs/AI_INTEGRATION.md` (env setup, usage examples, and CI guidance)
+- Examples: `scripts/gemini_gen.py`, `scripts/hf_gen.py`, `scripts/hf_example.js`
+- TypeScript helpers: `src/lib/ai/gemini.ts`, `src/lib/ai/hf.ts`
+
+> Security: Store API keys in GitHub secrets (e.g., `GEMINI_API_KEY`, `HF_API_TOKEN`) and avoid committing secrets to the repo.
+

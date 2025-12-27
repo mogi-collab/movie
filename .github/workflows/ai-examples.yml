@@ -1,0 +1,36 @@
+name: AI examples smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  run-examples:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      HF_API_TOKEN: ${{ secrets.HF_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/requirements.txt
+      - name: Run Python Gemini example (if GEMINI_API_KEY set)
+        if: env.GEMINI_API_KEY != ''
+        run: python scripts/gemini_gen.py
+      - name: Run HF Python example (if HF_API_TOKEN set)
+        if: env.HF_API_TOKEN != ''
+        run: python scripts/hf_gen.py
+      - name: Run Node HF example (if HF_API_TOKEN set)
+        if: env.HF_API_TOKEN != ''
+        run: node scripts/hf_example.js

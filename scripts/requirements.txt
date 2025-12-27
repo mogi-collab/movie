@@ -1,0 +1,10 @@
+google-generativeai
+transformers
+torch
+huggingface_hub
+crewai
+faiss-cpu
+sentence-transformers
+diffusers
+keybert
+spacy
