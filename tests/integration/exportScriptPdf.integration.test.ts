@@ -73,7 +73,7 @@ describe('export-script-pdf integration', () => {
     process.env.PDF_SERVICE_URL = 'https://pdf-service/generate';
     (global as any).Deno = undefined;
 
-    global.fetch = vi.fn(async (url: string, _opts?: any) => {
+    global.fetch = vi.fn(async (url: string) => {
       if (typeof url === 'string' && url.includes('/script_versions')) {
         return { ok: true, json: async () => [{ content: 'SOME SCRIPT', metadata: { title: 'PDF Title' }, version_number: 1 }] } as any;
       }
@@ -95,7 +95,7 @@ describe('export-script-pdf integration', () => {
     process.env.STORAGE_SERVICE_URL = 'https://storage-service/upload';
     (global as any).Deno = undefined;
 
-    global.fetch = vi.fn(async (url: string, _opts?: any) => {
+    global.fetch = vi.fn(async (url: string) => {
       if (typeof url === 'string' && url.includes('/script_versions')) {
         return { ok: true, json: async () => [{ content: 'SOME SCRIPT', metadata: { title: 'PDF Title' }, version_number: 1 }] } as any;
       }
