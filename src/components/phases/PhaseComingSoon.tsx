@@ -1,3 +1,4 @@
+import React from 'react';
 import { Info } from 'lucide-react';
 
 interface PhaseComingSoonProps {
@@ -24,6 +25,41 @@ const phaseDescriptions: Record<number, string> = {
 export default function PhaseComingSoon({ phase, title, description }: PhaseComingSoonProps) {
   const phaseDesc = phaseDescriptions[phase] || description;
 
+  const [open, setOpen] = React.useState(false);
+  const [email, setEmail] = React.useState('');
+  const [notes, setNotes] = React.useState('');
+  const [status, setStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+
+  function validateEmail(e: string) {
+    return /\S+@\S+\.\S+/.test(e);
+  }
+
+  async function submitRequest() {
+    if (!validateEmail(email)) {
+      setErrorMsg('Please enter a valid email.');
+      return;
+    }
+
+    try {
+      setStatus('loading');
+      setErrorMsg(null);
+      const res = await fetch('/functions/v1/request-phase-access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phase, email, notes }),
+      });
+
+      if (!res.ok) throw new Error('Request failed');
+
+      setStatus('success');
+      setTimeout(() => { setOpen(false); setStatus('idle'); setEmail(''); setNotes(''); }, 1200);
+    } catch (err: any) {
+      setStatus('error');
+      setErrorMsg(err?.message || 'An error occurred');
+    }
+  }
+
   return (
     <div className="space-y-8 pb-12">
       <div>
@@ -37,9 +73,15 @@ export default function PhaseComingSoon({ phase, title, description }: PhaseComi
         <p className="text-slate-400 mb-6 max-w-md mx-auto">
           This phase is under development. Focus on completing earlier phases first to unlock this powerful feature.
         </p>
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-lg text-sm text-slate-300">
-          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-          Estimated: Q1 2024
+        <div className="flex items-center justify-center gap-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-lg text-sm text-slate-300">
+            <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+            Estimated: Q1 2024
+          </div>
+
+          <button className="ml-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm text-white" onClick={() => setOpen(true)}>
+            Request Early Access
+          </button>
         </div>
       </div>
 
@@ -88,6 +130,29 @@ export default function PhaseComingSoon({ phase, title, description }: PhaseComi
           </ul>
         </div>
       </div>
+
+      {open && (
+        <div role="dialog" aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
+          <div className="relative bg-slate-900 rounded-lg border border-slate-700 p-6 w-full max-w-md z-10">
+            <h4 className="text-lg font-semibold text-slate-50 mb-4">Request Early Access - Phase {phase}</h4>
+            <label className="block text-slate-300 text-sm mb-2">Email</label>
+            <input className="w-full mb-3 p-2 rounded bg-slate-800 text-slate-50" value={email} onChange={(e) => setEmail((e.target as HTMLInputElement).value)} placeholder="you@example.com" />
+            <label className="block text-slate-300 text-sm mb-2">Notes (optional)</label>
+            <textarea className="w-full mb-3 p-2 rounded bg-slate-800 text-slate-50" value={notes} onChange={(e) => setNotes((e.target as HTMLTextAreaElement).value)} placeholder="Tell us what you'd like to see" />
+
+            {errorMsg && <p className="text-sm text-red-400 mb-2">{errorMsg}</p>}
+            {status === 'success' && <p className="text-sm text-green-400 mb-2">Request submitted — we will email you when the beta is available.</p>}
+
+            <div className="flex items-center justify-end gap-2">
+              <button className="px-3 py-1 rounded bg-slate-700 text-sm text-slate-200" onClick={() => setOpen(false)} disabled={status === 'loading'}>Cancel</button>
+              <button className="px-3 py-1 rounded bg-blue-600 text-sm text-white" onClick={submitRequest} disabled={status === 'loading'}>
+                {status === 'loading' ? 'Sending…' : 'Request Access'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
