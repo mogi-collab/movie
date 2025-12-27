@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="36" failures="0" errors="0" time="9.297">
+    <testsuite name="tests/OutputDashboardStructure.test.tsx" timestamp="2025-12-27T11:29:33.276Z" hostname="runnervmh13bl" tests="2" failures="0" errors="0" skipped="0" time="1.085">
+        <testcase classname="tests/OutputDashboardStructure.test.tsx" name="OutputDashboard (SSR snapshot) &gt; renders the Project Output header" time="0.022">
+        </testcase>
+        <testcase classname="tests/OutputDashboardStructure.test.tsx" name="OutputDashboard (SSR snapshot) &gt; shows Structure Coherence card after fetching structure-check" time="1.062">
+            <system-err>
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/Phase4ScriptsAccessibility.test.tsx" timestamp="2025-12-27T11:29:33.277Z" hostname="runnervmh13bl" tests="3" failures="0" errors="0" skipped="0" time="0.515">
+        <testcase classname="tests/Phase4ScriptsAccessibility.test.tsx" name="Phase4Scripts accessibility &gt; modal closes on Escape and focuses close button on open" time="0.411">
+            <system-err>
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/Phase4ScriptsAccessibility.test.tsx" name="Phase4Scripts accessibility &gt; load versions button has aria-controls and aria-expanded toggles" time="0.037">
+            <system-err>
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/Phase4ScriptsAccessibility.test.tsx" name="Phase4Scripts accessibility &gt; version preview buttons are keyboard navigable with ArrowDown/ArrowUp" time="0.066">
+            <system-err>
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/Phase4ScriptsExport.test.tsx" timestamp="2025-12-27T11:29:33.279Z" hostname="runnervmh13bl" tests="1" failures="0" errors="0" skipped="0" time="0.007">
+        <testcase classname="tests/Phase4ScriptsExport.test.tsx" name="Phase4Scripts component (SSR render) &gt; renders generate button and has Export text in markup" time="0.007">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/Phase4ScriptsVersions.test.tsx" timestamp="2025-12-27T11:29:33.280Z" hostname="runnervmh13bl" tests="1" failures="0" errors="0" skipped="0" time="4.142">
+        <testcase classname="tests/Phase4ScriptsVersions.test.tsx" name="Phase4Scripts versions preview &gt; loads versions and shows preview modal with diff" time="4.14">
+            <system-err>
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+Warning: The current testing environment is not configured to support act(...)
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/Phase5Characters.test.tsx" timestamp="2025-12-27T11:29:33.281Z" hostname="runnervmh13bl" tests="1" failures="0" errors="0" skipped="0" time="0.007">
+        <testcase classname="tests/Phase5Characters.test.tsx" name="Phase5Characters component (SSR render) &gt; renders header and generate button" time="0.006">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/character.test.ts" timestamp="2025-12-27T11:29:33.281Z" hostname="runnervmh13bl" tests="2" failures="0" errors="0" skipped="0" time="0.005">
+        <testcase classname="tests/character.test.ts" name="generateCharacterForIndex &gt; parses JSON from AI and returns a character object" time="0.003">
+        </testcase>
+        <testcase classname="tests/character.test.ts" name="generateCharacterForIndex &gt; returns fallback object when parsing fails" time="0">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/debateUtils.test.ts" timestamp="2025-12-27T11:29:33.282Z" hostname="runnervmh13bl" tests="3" failures="0" errors="0" skipped="0" time="0.006">
+        <testcase classname="tests/debateUtils.test.ts" name="debateUtils &gt; agreement is 1 when all agree" time="0.003">
+        </testcase>
+        <testcase classname="tests/debateUtils.test.ts" name="debateUtils &gt; handles weighted agreement correctly" time="0.002">
+        </testcase>
+        <testcase classname="tests/debateUtils.test.ts" name="debateUtils &gt; entropy is highest when evenly split" time="0">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/structureCheck.test.ts" timestamp="2025-12-27T11:29:33.283Z" hostname="runnervmh13bl" tests="2" failures="0" errors="0" skipped="0" time="0.007">
+        <testcase classname="tests/structureCheck.test.ts" name="runStructureCheck &gt; throws on missing outline" time="0.003">
+        </testcase>
+        <testcase classname="tests/structureCheck.test.ts" name="runStructureCheck &gt; detects non-increasing scene numbers and missing foreshadowing" time="0.003">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/uploadPdfEnvDetection.test.ts" timestamp="2025-12-27T11:29:33.283Z" hostname="runnervmh13bl" tests="3" failures="0" errors="0" skipped="0" time="0.006">
+        <testcase classname="tests/uploadPdfEnvDetection.test.ts" name="runUploadPdf env detection &gt; reads values from Deno.env when available" time="0.003">
+        </testcase>
+        <testcase classname="tests/uploadPdfEnvDetection.test.ts" name="runUploadPdf env detection &gt; reads values from process.* when Deno not present" time="0.001">
+        </testcase>
+        <testcase classname="tests/uploadPdfEnvDetection.test.ts" name="runUploadPdf env detection &gt; reads values from process.env when process.* not present" time="0.001">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/uploadPdfRetries.test.ts" timestamp="2025-12-27T11:29:33.284Z" hostname="runnervmh13bl" tests="2" failures="0" errors="0" skipped="0" time="0.015">
+        <testcase classname="tests/uploadPdfRetries.test.ts" name="runUploadPdf retries &gt; retries on transient failures and succeeds" time="0.007">
+        </testcase>
+        <testcase classname="tests/uploadPdfRetries.test.ts" name="runUploadPdf retries &gt; fails after exhausting retries" time="0.006">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/e2e/exportRollback.e2e.test.ts" timestamp="2025-12-27T11:29:33.285Z" hostname="runnervmh13bl" tests="2" failures="0" errors="0" skipped="0" time="0.008">
+        <testcase classname="tests/e2e/exportRollback.e2e.test.ts" name="e2e: export to PDF and rollback &gt; exports PDF for a given script version and records export" time="0.006">
+        </testcase>
+        <testcase classname="tests/e2e/exportRollback.e2e.test.ts" name="e2e: export to PDF and rollback &gt; rolls back to a previous version and creates a new version entry" time="0.001">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/e2e/fullFlow.e2e.test.ts" timestamp="2025-12-27T11:29:33.285Z" hostname="runnervmh13bl" tests="1" failures="0" errors="0" skipped="0" time="0.026">
+        <testcase classname="tests/e2e/fullFlow.e2e.test.ts" name="e2e: full pipeline (concepts -&gt; outlines -&gt; debates -&gt; scripts -&gt; export) &gt; runs full pipeline without throwing and produces exports" time="0.025">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/exportScript.integration.test.ts" timestamp="2025-12-27T11:29:33.286Z" hostname="runnervmh13bl" tests="1" failures="0" errors="0" skipped="0" time="0.006">
+        <testcase classname="tests/integration/exportScript.integration.test.ts" name="export-script integration &gt; creates export record and returns artifact url" time="0.004">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/exportScriptPdf.integration.test.ts" timestamp="2025-12-27T11:29:33.286Z" hostname="runnervmh13bl" tests="4" failures="0" errors="0" skipped="0" time="0.013">
+        <testcase classname="tests/integration/exportScriptPdf.integration.test.ts" name="export-script-pdf integration &gt; calls pdf service and storage and stores export record" time="0.006">
+        </testcase>
+        <testcase classname="tests/integration/exportScriptPdf.integration.test.ts" name="export-script-pdf integration &gt; falls back to data URL when no pdf or storage service is configured" time="0.001">
+        </testcase>
+        <testcase classname="tests/integration/exportScriptPdf.integration.test.ts" name="export-script-pdf integration &gt; throws when pdf service returns non-ok" time="0.003">
+            <system-err>
+PDF service error 500 Service error
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/integration/exportScriptPdf.integration.test.ts" name="export-script-pdf integration &gt; throws when storage service returns non-ok" time="0.001">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/generateCharacters.integration.test.ts" timestamp="2025-12-27T11:29:33.288Z" hostname="runnervmh13bl" tests="1" failures="0" errors="0" skipped="0" time="0.004">
+        <testcase classname="tests/integration/generateCharacters.integration.test.ts" name="generate-characters integration &gt; generates and stores characters" time="0.004">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/generateConcepts.integration.test.ts" timestamp="2025-12-27T11:29:33.288Z" hostname="runnervmh13bl" tests="2" failures="0" errors="0" skipped="0" time="0.013">
+        <testcase classname="tests/integration/generateConcepts.integration.test.ts" name="generate-concepts integration &gt; returns one idea per AI role" time="0.01">
+            <system-err>
+Error generating concept for role realist: Error: Simulated Anthropic failure for Realist
+    at Proxy.callAnthropicWithRetry (/home/runner/work/movie/movie/tests/integration/generateConcepts.integration.test.ts:13:17)
+    at generateConceptForRole (/home/runner/work/movie/movie/supabase/functions/generate-concepts/index.ts:184:25)
+    at /home/runner/work/movie/movie/supabase/functions/generate-concepts/index.ts:169:25
+    at Array.map (&lt;anonymous&gt;)
+    at Module.runGenerateConceptsForProject (/home/runner/work/movie/movie/supabase/functions/generate-concepts/index.ts:167:45)
+    at /home/runner/work/movie/movie/tests/integration/generateConcepts.integration.test.ts:47:25
+    at file:///home/runner/work/movie/movie/node_modules/@vitest/runner/dist/index.js:135:14
+    at file:///home/runner/work/movie/movie/node_modules/@vitest/runner/dist/index.js:60:26
+    at runTest (file:///home/runner/work/movie/movie/node_modules/@vitest/runner/dist/index.js:781:17)
+    at runSuite (file:///home/runner/work/movie/movie/node_modules/@vitest/runner/dist/index.js:909:15)
+
+            </system-err>
+        </testcase>
+        <testcase classname="tests/integration/generateConcepts.integration.test.ts" name="generate-concepts integration &gt; continues when one role fails" time="0.002">
+            <system-err>
+Error generating concept for role realist: Error: Simulated Anthropic failure for Realist
+    at Proxy.callAnthropicWithRetry (/home/runner/work/movie/movie/tests/integration/generateConcepts.integration.test.ts:13:17)
+    at generateConceptForRole (/home/runner/work/movie/movie/supabase/functions/generate-concepts/index.ts:184:25)
+    at /home/runner/work/movie/movie/supabase/functions/generate-concepts/index.ts:169:25
+    at Array.map (&lt;anonymous&gt;)
+    at Module.runGenerateConceptsForProject (/home/runner/work/movie/movie/supabase/functions/generate-concepts/index.ts:167:45)
+    at /home/runner/work/movie/movie/tests/integration/generateConcepts.integration.test.ts:76:25
+    at file:///home/runner/work/movie/movie/node_modules/@vitest/runner/dist/index.js:135:14
+    at file:///home/runner/work/movie/movie/node_modules/@vitest/runner/dist/index.js:60:26
+    at runTest (file:///home/runner/work/movie/movie/node_modules/@vitest/runner/dist/index.js:781:17)
+    at runSuite (file:///home/runner/work/movie/movie/node_modules/@vitest/runner/dist/index.js:909:15)
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/generateDebates.integration.test.ts" timestamp="2025-12-27T11:29:33.289Z" hostname="runnervmh13bl" tests="1" failures="0" errors="0" skipped="0" time="0.005">
+        <testcase classname="tests/integration/generateDebates.integration.test.ts" name="generate-debates integration &gt; produces debate records and returns a stored debate" time="0.004">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/generateScripts.integration.test.ts" timestamp="2025-12-27T11:29:33.289Z" hostname="runnervmh13bl" tests="1" failures="0" errors="0" skipped="0" time="0.007">
+        <testcase classname="tests/integration/generateScripts.integration.test.ts" name="generate-scripts integration &gt; generates scripts for different types and stores them" time="0.005">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/generateStories.integration.test.ts" timestamp="2025-12-27T11:29:33.290Z" hostname="runnervmh13bl" tests="1" failures="0" errors="0" skipped="0" time="0.004">
+        <testcase classname="tests/integration/generateStories.integration.test.ts" name="generate-stories integration &gt; returns one outline per AI role and stores outlines" time="0.004">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/rollbackScript.integration.test.ts" timestamp="2025-12-27T11:29:33.290Z" hostname="runnervmh13bl" tests="1" failures="0" errors="0" skipped="0" time="0.004">
+        <testcase classname="tests/integration/rollbackScript.integration.test.ts" name="rollback-script integration &gt; applies version to script and creates new version" time="0.002">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/integration/uploadPdf.integration.test.ts" timestamp="2025-12-27T11:29:33.291Z" hostname="runnervmh13bl" tests="1" failures="0" errors="0" skipped="0" time="0.005">
+        <testcase classname="tests/integration/uploadPdf.integration.test.ts" name="upload-pdf integration &gt; uploads PDF to Supabase storage and returns public URL" time="0.004">
+        </testcase>
+    </testsuite>
+</testsuites>
