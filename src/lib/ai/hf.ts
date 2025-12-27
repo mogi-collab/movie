@@ -1,8 +1,10 @@
+import { getDefaultModel } from './config';
+
 export async function generateWithHF(modelId: string | undefined, input: string): Promise<string> {
   const token = process.env.HF_API_TOKEN;
   if (!token) throw new Error('HF_API_TOKEN not set');
 
-  const defaultModel = process.env.HF_DEFAULT_MODEL || 'mistralai/Mistral-7B-Instruct-v0.2';
+  const defaultModel = process.env.HF_DEFAULT_MODEL || getDefaultModel('backupLLM') || 'mistralai/Mistral-7B-Instruct-v0.2';
   const selectedModel = modelId || defaultModel;
 
   const url = `https://api-inference.huggingface.co/models/${selectedModel}`;
