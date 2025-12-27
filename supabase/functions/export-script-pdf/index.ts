@@ -48,7 +48,11 @@ export async function runExportScriptPdf(projectId: string, scriptId: string, ve
 
   if (pdfService) {
     const resp = await fetch(pdfService, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ html }) });
-    if (!resp.ok) throw new Error('PDF service failed');
+    if (!resp.ok) {
+      const txt = await resp.text().catch(() => '');
+      console.error('PDF service error', resp.status, txt);
+      throw new Error(`PDF service failed: ${resp.status} ${txt}`);
+    }
     const data = await resp.json();
     pdfBase64 = data?.base64 || null;
   } else {

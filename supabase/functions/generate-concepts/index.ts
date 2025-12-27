@@ -110,7 +110,7 @@ if (typeof Deno !== 'undefined' && typeof (Deno as any).serve === 'function') {
     // Store ideas in database; continue even if individual inserts fail
     for (const idea of ideas) {
       try {
-        await fetch(`${supabaseUrl}/rest/v1/ideas`, {
+        const res = await fetch(`${supabaseUrl}/rest/v1/ideas`, {
           method: "POST",
           headers: {
             apikey: supabaseServiceKey || "",
@@ -130,6 +130,10 @@ if (typeof Deno !== 'undefined' && typeof (Deno as any).serve === 'function') {
             philosophy_depth: (idea as any).philosophy_depth,
           }),
         });
+        if (!res.ok) {
+          const text = await res.text().catch(() => '');
+          console.error(`Failed to store idea for role ${idea.ai_role}: ${res.status} ${text}`);
+        }
       } catch (err) {
         console.error(`Failed to store idea for role ${idea.ai_role}:`, err);
         // continue storing others
